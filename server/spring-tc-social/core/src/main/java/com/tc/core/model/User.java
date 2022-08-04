@@ -100,18 +100,17 @@ public class User implements Serializable {
     private Collection<Review> reviews = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Collection<UserReviewVisit> visitReviewPosts = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "notifier")
     private Collection<Notification> notifications = new LinkedList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<ReviewPost> reviewPosts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "actor")
+    private Collection<NotificationActor> notificationActors;
 
-//    @ManyToMany(cascade = CascadeType.REFRESH)
-//    @JoinTable(name = "participant_review_post", joinColumns = { @JoinColumn(name = "participant_id") }, inverseJoinColumns = {
-//            @JoinColumn(name = "review_post_id") })
-//    private List<ReviewPost> participantReviewPosts = new ArrayList<>();
+
 }

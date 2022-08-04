@@ -15,10 +15,11 @@ public class UserNotificationService {
     private final NotificationRepository repo;
 
     public List<Notification> getUserNotifications(User user){
-        return repo.findAllByUserOrderByCreateDateDesc(user);
+        return repo.findAllByNotifierOrderByCreateDateDesc(user);
     }
 
     public void save(Notification notification){
         repo.save(notification);
     }
+
 }

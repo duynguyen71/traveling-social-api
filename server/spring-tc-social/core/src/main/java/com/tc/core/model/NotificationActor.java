@@ -2,42 +2,31 @@ package com.tc.core.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-
-@Table(name = "notification")
+@Table(name = "notification_actor")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class Notification implements Serializable {
+public class NotificationActor implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "notifier_id")
-    private User notifier;
-
-    @ManyToOne
     @JoinColumn(name = "notification_object_id")
     private NotificationObject notificationObject;
 
-    private Integer status;
+    @ManyToOne
+    @JoinColumn(name = "actor_id")
+    private User actor;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date createDate;
-
     @Temporal(TemporalType.TIMESTAMP)
-    @UpdateTimestamp
-    private Date updateDate;
-
-
+    private Date createDate;
 }
