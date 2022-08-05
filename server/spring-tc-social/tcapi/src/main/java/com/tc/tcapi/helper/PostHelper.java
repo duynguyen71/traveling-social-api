@@ -29,7 +29,7 @@ public class PostHelper {
     private final PostReactionService postReactionService;
     private final PostCommentService postCommentService;
     private final ObjectMapperUtils om;
-    private final ReviewPostService reviewPostService;
+    private final ReviewService reviewPostService;
     private final FileService fileService;
 
     //    /* Create review post*/

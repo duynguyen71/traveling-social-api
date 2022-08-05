@@ -22,10 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByVerificationCode(String code);
 
-    Optional<User> findByEmail(String email);
-
-    Optional<User> findByUsername(String username);
-
     List<User> findAllByRole(Role role);
 
     @Query(nativeQuery = true,
@@ -47,17 +43,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByIdAndActive(Long id, Integer active);
 
-    //    @Query(value = "SELECT DISTINCT u.* FROM user u \n" +
-//            "JOIN post p \n" +
-//            "ON u.id = p.user_id\n" +
-//            "WHERE u.active =1\n" +
-//            "GROUP BY u.id\n" +
-//            "ORDER BY COUNT(p.id) DESC \n" +
-//            "LIMIT 10", nativeQuery = true)
     @Query(value = "SELECT * FROM user  AS t1 JOIN (SELECT user_id, count(*) AS total \n" +
             "FROM(SELECT DISTINCT user_id FROM post\n" +
             "UNION ALL\n" +
-            "SELECT user_id FROM review\n) AS counted\n" +
+            "SELECT user_id FROM review_post\n) AS counted\n" +
             "GROUP BY user_id \n" +
             "ORDER BY total DESC\n" +
             "LIMIT 10) AS t2 ON t1.id = t2.user_id\n", nativeQuery = true)

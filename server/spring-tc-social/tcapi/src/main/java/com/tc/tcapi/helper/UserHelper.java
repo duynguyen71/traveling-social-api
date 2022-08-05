@@ -153,11 +153,11 @@ public class UserHelper {
                         .contentType(MediaType.IMAGE_JPEG)
                         .body(new FileUrlResource(file.getPath()));
             } catch (FileNotFoundException | MalformedURLException e) {
-                e.printStackTrace();
+                log.info("Can not find image with name: {}", fileName);
+//                e.printStackTrace();
                 return BaseResponse.badRequest(e.getMessage());
             }
         }
-
         return BaseResponse.badRequest("Could not find file with name : " + fileName);
     }
 

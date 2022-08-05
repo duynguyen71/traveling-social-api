@@ -25,7 +25,7 @@ public class UserReviewVisit implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "review_id")
-    private Review review;
+    private ReviewPost review;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

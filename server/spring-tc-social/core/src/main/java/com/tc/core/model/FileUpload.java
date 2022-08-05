@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FileUpload{
+public class FileUpload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,17 +61,12 @@ public class FileUpload{
     @OneToMany(mappedBy = "attachment", fetch = FetchType.LAZY)
     private List<PostComment> postComments = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "photos")
-    private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
+    private Collection<ReviewPostImage> reviewPostImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "coverPhoto")
-    private List<Review> reviewCoverPhotos = new ArrayList<>();
 
-//    @OneToOne(mappedBy = "coverImage")
-//    private ReviewPost coverReviewPost;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "review_post_id")
-//    private ReviewPost reviewPost;
+    @OneToMany(mappedBy = "coverImage", fetch = FetchType.LAZY)
+    private Collection<ReviewPost> reviewPostCoverImages = new ArrayList<>();
+
 
 }

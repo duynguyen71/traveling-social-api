@@ -1,33 +1,47 @@
 package com.tc.core.response;
 
-import com.tc.core.model.FileUpload;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
 @Setter
-public class ReviewPostResponse {
-    String title;
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReviewPostResponse implements Serializable {
 
-    String bio;
+    private Long id;
 
-    Date departureDay;
+    private String title;
 
-    int totalDay;
+    private String content;
 
-    double cost;
+    private String contentJson;
 
-    int participantsNumber;
+    private Date departureDay;
 
-    FileUploadResponse coverImage;
+    private int totalDay;
 
-    List<FileUploadResponse> reviewPostImages;
+    private double cost;
+
+    private int numOfParticipant;
+
+    private int status;
+
+    private int viewCount;
+
+    private FileUploadResponse coverPhoto;
+
+    private List<ReviewPostAttachmentResponse> images = new LinkedList();
+
+    private UserInfoResponse user;
+
+    private Date createDate;
+
+    private Date updateDate;
+
+
 }

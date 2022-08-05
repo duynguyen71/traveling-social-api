@@ -29,13 +29,11 @@ public class ReviewPostImage {
     //đùng để sắp xếp vị trí của ảnh
     private Integer pos;
 
-    //status 0 thì image đã bị xóa còn 1 thì ảnh vẫn còn trên bài review
     private Integer status;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "review_post")
+    @JoinColumn(name = "review_post_id")
     private ReviewPost reviewPost;
-
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

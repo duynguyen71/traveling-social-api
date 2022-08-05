@@ -21,7 +21,7 @@ public class MemberController {
     private final FileUploadHelper fileUploadHelper;
     private final CommentHelper commentHelper;
     private final PostReactionHelper postReactionHelper;
-    private final ReviewHelper reviewHelper;
+    private final ReviewPostHelper reviewPostHelper;
     private final ChatGroupHelper chatGroupHelper;
     private final MessageHelper messageHelper;
     private final UserNotificationHelper userNotificationHelper;
@@ -115,12 +115,6 @@ public class MemberController {
         return postHelper.createPost(createPostRequest);
     }
 
-    @PostMapping("/review-post")
-    public ResponseEntity<?> createReviewPost(@RequestBody ReviewPostRequest reviewPostRequest,
-                                              @RequestParam Long coverImageId,
-                                              @RequestParam Long[] reviewPostImageIds) {
-        return postHelper.createReviewPost(reviewPostRequest, coverImageId, reviewPostImageIds);
-    }
 
 
     @GetMapping("/users/me/following")
@@ -199,27 +193,27 @@ public class MemberController {
     //get current user review posts
     @GetMapping("/users/me/reviews")
     public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param) {
-        return reviewHelper.getCurrentUserReviewPosts(param);
+        return reviewPostHelper.getCurrentUserReviewPosts(param);
     }
 
     @GetMapping("/users/{userId}/reviews")
     public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param, @PathVariable("userId") Long userId) {
-        return reviewHelper.getUserReviewPosts(userId, param);
+        return reviewPostHelper.getUserReviewPosts(userId, param);
     }
 
     @GetMapping("/reviews")
     public ResponseEntity<?> getReviewPosts(@RequestParam Map<String, String> param) {
-        return reviewHelper.getReviewPosts(param);
+        return reviewPostHelper.getReviewPosts(param);
     }
 
-    @PostMapping("/reviews")
-    public ResponseEntity<?> saveReview(@RequestBody @Valid ReviewRequest request) {
-        return reviewHelper.saveReview(request);
+    @PostMapping("/review-posts")
+    public ResponseEntity<?> createReviewPost(@RequestBody @Valid CreateReviewPostRequest request){
+        return reviewPostHelper.createReviewPost(request);
     }
 
-    @GetMapping("/reviews/{reviewId}")
+    @GetMapping("/review-posts/{reviewId}")
     public ResponseEntity<?> getReviewPostDetail(@PathVariable("reviewId") Long reviewId) {
-        return reviewHelper.getReviewPostDetail(reviewId);
+        return reviewPostHelper.getReviewPostDetail(reviewId);
     }
 
     @GetMapping("/users")

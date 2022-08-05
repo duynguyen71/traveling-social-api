@@ -2,6 +2,7 @@ package com.tc.tcapi.controller;
 
 import com.tc.core.response.ForwardGeocodingResponse;
 import com.tc.core.response.PlaceAutocompleteResponse;
+import com.tc.tcapi.helper.ReviewPostHelper;
 import com.tc.tcapi.utilities.Constance;
 import com.tc.tcapi.helper.UserHelper;
 import com.tc.core.request.RegistrationRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 
 @RestController
@@ -22,6 +24,7 @@ import javax.validation.Valid;
 public class PublicController {
 
     private final UserHelper userHelper;
+    private final ReviewPostHelper reviewPostHelper;
 
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
@@ -44,8 +47,9 @@ public class PublicController {
         return userHelper.getImage(name);
     }
 
-    @GetMapping("/goong/geocode/address/{address}") ResponseEntity<ForwardGeocodingResponse> getForwardGeocoding(@PathVariable String address){
-        String URL = Constance.GOONG_URL+"/geocode";
+    @GetMapping("/goong/geocode/address/{address}")
+    ResponseEntity<ForwardGeocodingResponse> getForwardGeocoding(@PathVariable String address) {
+        String URL = Constance.GOONG_URL + "/geocode";
         RestTemplate template = new RestTemplateBuilder().build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -60,8 +64,10 @@ public class PublicController {
         );
         return responseEntity;
     }
-    @GetMapping("/goong/place/autocomplete/{place}") ResponseEntity<PlaceAutocompleteResponse> getPlaceAutoComplete(@PathVariable String place){
-        String URL = Constance.GOONG_URL+"/Place/AutoComplete";
+
+    @GetMapping("/goong/place/autocomplete/{place}")
+    ResponseEntity<PlaceAutocompleteResponse> getPlaceAutoComplete(@PathVariable String place) {
+        String URL = Constance.GOONG_URL + "/Place/AutoComplete";
         RestTemplate template = new RestTemplateBuilder().build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -76,8 +82,10 @@ public class PublicController {
         );
         return responseEntity;
     }
-    @GetMapping("/goong/place/detail/{placeId}") ResponseEntity getPlaceDetailById(@PathVariable String placeId){
-        String URL = Constance.GOONG_URL+"/Place/Detail";
+
+    @GetMapping("/goong/place/detail/{placeId}")
+    ResponseEntity getPlaceDetailById(@PathVariable String placeId) {
+        String URL = Constance.GOONG_URL + "/Place/Detail";
         RestTemplate template = new RestTemplateBuilder().build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -91,5 +99,10 @@ public class PublicController {
                 Object.class
         );
         return responseEntity;
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<?> getReviewPosts(@RequestParam Map<String, String> param) {
+        return reviewPostHelper.getReviewPosts(param);
     }
 }

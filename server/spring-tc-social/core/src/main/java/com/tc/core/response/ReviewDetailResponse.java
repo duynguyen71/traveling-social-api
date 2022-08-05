@@ -1,31 +1,39 @@
 package com.tc.core.response;
 
-import lombok.Data;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Data
-public class ReviewDetailResponse {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReviewDetailResponse implements Serializable {
+
+    private Long id;
 
     private String title;
 
-    private String detail;
+    private String content;
 
-    private Double cost;
+    private String contentJson;
 
-    private Integer totalMember;
+    private double cost;
 
-    private Integer totalDay;
+    private int numOfParticipant;
 
-    private Integer status;
+    private int totalDay;
 
-    private FileUploadResponse coverPhoto;
+    private int status;
 
-    private Set<FileUploadResponse> photos = new LinkedHashSet<>();
+    private FileUploadResponse coverImage;
 
-    private UserInfoResponse user;
+    private Set<ReviewPostAttachmentResponse> images = new LinkedHashSet<>();
+
+    private BaseUserResponse user;
 
     private Date createDate;
 

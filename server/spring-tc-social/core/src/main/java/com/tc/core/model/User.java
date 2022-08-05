@@ -47,37 +47,10 @@ public class User implements Serializable {
 
     private Integer isUsingApp;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
-    private Date createDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @UpdateTimestamp
-    private Date updateDate;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private Role role;
-
     //
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "uploadBy")
     private List<FileUpload> fileUploads = new ArrayList<>();
 
-    public User(Long id, String username, String fullName, String phone, String email, String password, String verificationCode, String avt, int active, int status, Date createDate, Date updateDate, Role role) {
-        this.id = id;
-        this.username = username;
-        this.fullName = fullName;
-        this.phone = phone;
-        this.email = email;
-        this.password = password;
-        this.verificationCode = verificationCode;
-        this.avt = avt;
-        this.active = active;
-        this.status = status;
-        this.createDate = createDate;
-        this.updateDate = updateDate;
-        this.role = role;
-    }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Follow> followers = new HashSet<>();
@@ -96,10 +69,6 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<PostReaction> postReactions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private Collection<Review> reviews = new ArrayList<>();
-
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Collection<UserReviewVisit> visitReviewPosts = new HashSet<>();
 
@@ -112,5 +81,33 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "actor")
     private Collection<NotificationActor> notificationActors;
 
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Date createDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date updateDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public User(Long id, String username, String fullName, String phone, String email, String password, String verificationCode, String avt, int active, int status, Date createDate, Date updateDate, Role role) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.email = email;
+        this.password = password;
+        this.verificationCode = verificationCode;
+        this.avt = avt;
+        this.active = active;
+        this.status = status;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+        this.role = role;
+    }
 
 }
