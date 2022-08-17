@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -65,7 +64,7 @@ public class FileUpload {
     private Collection<ReviewPostImage> reviewPostImages = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "coverImage", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "coverPhoto", fetch = FetchType.LAZY)
     private Collection<ReviewPost> reviewPostCoverImages = new ArrayList<>();
 
 

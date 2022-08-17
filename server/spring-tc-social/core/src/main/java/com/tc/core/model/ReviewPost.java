@@ -26,8 +26,8 @@ public class ReviewPost {
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "cover_image_id")
-    private FileUpload coverImage;
+    @JoinColumn(name = "cover_photo_id")
+    private FileUpload coverPhoto;
 
     @NotNull
     private String content;

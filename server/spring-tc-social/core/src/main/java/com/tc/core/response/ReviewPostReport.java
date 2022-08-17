@@ -18,7 +18,7 @@ public class ReviewPostReport implements Serializable {
 
     private String title;
 
-    private FileUploadResponse coverImage;
+    private FileUploadResponse coverPhoto;
 
     private int numOfVisitor;
 
@@ -27,4 +27,6 @@ public class ReviewPostReport implements Serializable {
     private int numOfLike;
 
     private Date createDate;
+
+    private Date updateDate;
 }

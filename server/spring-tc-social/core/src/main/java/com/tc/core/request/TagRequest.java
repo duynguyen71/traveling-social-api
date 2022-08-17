@@ -14,4 +14,6 @@ public class TagRequest implements Serializable {
     private Long id;
 
     private String name;
+
+    private int status;
 }

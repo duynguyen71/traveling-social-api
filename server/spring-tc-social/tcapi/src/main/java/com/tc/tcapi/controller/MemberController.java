@@ -327,6 +327,13 @@ public class MemberController {
     public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param) {
         return reviewPostHelper.getCurrentUserReviewPosts(param);
     }
+    /**
+     * Get current user review posts detail
+     */
+    @GetMapping("/users/me/review-posts/{id}/detail")
+    public ResponseEntity<?> getCurrentUserReviewPostDetail(@PathVariable Long id) {
+        return reviewPostHelper.getCurrentUserReviewPostDetail(id);
+    }
 
     /**
      * Reaction review post

@@ -1,15 +1,21 @@
 package com.tc.core.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewDetailResponse implements Serializable {
+public class ReviewPostEditDetailResponse implements Serializable {
 
     private Long id;
 
@@ -25,26 +31,13 @@ public class ReviewDetailResponse implements Serializable {
 
     private int totalDay;
 
-    private  int numOfVisitor;
-
-    private  int numOfReaction;
-
-    private int numOfComment;
-
-    private boolean hasBookmark;
-
     private int status;
-
-    private ReactionResponse reaction;
 
     private FileUploadResponse coverPhoto;
 
-    private Set<ReviewPostAttachmentResponse> images = new LinkedHashSet<>();
+    private List<ReviewPostEditAttachmentResponse> images = new LinkedList<>();
 
     private Set<TagResponse> tags = new LinkedHashSet<>();
 
-    private BaseUserResponse user;
-
-    private Date createDate;
 
 }

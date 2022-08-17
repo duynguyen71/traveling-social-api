@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -139,30 +140,25 @@ public class ReviewPostHelper {
         if (coverImage == null) {
             return BaseResponse.badRequest("Create review post failed: cover image not found");
         }
-        reviewPost.setCoverImage(coverImage);
+        reviewPost.setCoverPhoto(coverImage);
         reviewPost = reviewPostService.saveFlush(reviewPost);
         // Save tags
         Set<TagRequest> tags = request.getTags();
         for (TagRequest tagReq :
                 tags) {
             Tag tag;
-            Long tagReqId = tagReq.getId();
-            if (tagReqId != null && tagService.existsById(tagReqId)) {
-                tag = tagService.getById(tagReqId);
-            } else {
-                String tagReqName = tagReq.getName();
-                boolean isNameBlank = ValidationUtil.isNullOrBlank(tagReqName);
-                if (isNameBlank) continue;
-                if (tagService.existsByName(tagReqName)) {
-                    tag = tagService.getByName(tagReqName);
-                } else {
-                    tag = Tag.builder().name(tagReqName).build();
-                    tag = tagService.saveFlush(tag);
-                }
+            String tagReqName = tagReq.getName();
+            tag = tagService.getByName(tagReqName);
+            if (tag == null) {
+                tag = tagService.saveFlush(Tag.builder().name(tagReqName).build());
             }
-            tag.getReviewPosts().add(reviewPost);
-            reviewPost.getTags().add(tag);
-            reviewPost = reviewPostService.saveFlush(reviewPost);
+//            tag.getReviewPosts().add(reviewPost);
+            if (tagReq.getStatus() == 0) {
+                reviewPost.getTags().remove(tag);
+            } else {
+                reviewPost.getTags().add(tag);
+            }
+            reviewPostService.save(reviewPost);
         }
         // Save photo
         for (ReviewPostAttachmentRequest attachmentRequest : attachments) {
@@ -237,5 +233,24 @@ public class ReviewPostHelper {
         data.setIsFollowing(followService.isFollowed(user, userService.getCurrentUser(), 1));
         return BaseResponse.success(data, "Get auth success!");
 
+    }
+
+    public ResponseEntity<?> getCurrentUserReviewPostDetail(Long id) {
+        ReviewPost reviewPost = reviewPostService.getById(id);
+        ReviewPostEditDetailResponse data = modelMapper.map(reviewPost, ReviewPostEditDetailResponse.class);
+        List<ReviewPostImage> attachments = attService.getImages(reviewPost, 1);
+        List<ReviewPostEditAttachmentResponse> attachmentResponses = new LinkedList<>();
+        for (int i = 0; i < attachments.size(); i++) {
+            ReviewPostImage image = attachments.get(i);
+            ReviewPostEditAttachmentResponse attResponse = new ReviewPostEditAttachmentResponse();
+            attResponse.setId(image.getId());
+            attResponse.setImageId(image.getImage().getId());
+            attResponse.setName(image.getImage().getName());
+            attResponse.setStatus(1);
+            attResponse.setPos(image.getStatus());
+            attachmentResponses.add(attResponse);
+        }
+        data.setImages(attachmentResponses);
+        return BaseResponse.success(data, "get current user review post detail success!");
     }
 }

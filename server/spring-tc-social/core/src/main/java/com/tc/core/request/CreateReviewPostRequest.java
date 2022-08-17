@@ -19,7 +19,7 @@ public class CreateReviewPostRequest implements Serializable {
     @NotBlank
     private String title;
 
-    private Double cost = 0.0;
+    private double cost = 0.0;
 
     private int numOfParticipant = 1;
 
