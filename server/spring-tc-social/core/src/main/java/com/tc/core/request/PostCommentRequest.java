@@ -1,9 +1,14 @@
 package com.tc.core.request;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
-public class PostCommentRequest {
+import java.io.Serializable;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class PostCommentRequest implements Serializable {
 
     private Long id;
 

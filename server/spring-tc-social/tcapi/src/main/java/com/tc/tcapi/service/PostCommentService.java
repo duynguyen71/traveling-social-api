@@ -21,6 +21,7 @@ public class PostCommentService {
     public PostComment getById(Long id) {
         return commentRepo.findById(id).orElse(null);
     }
+
     public PostComment getByIdAndStatus(Long id, Integer status){
         return commentRepo.findByIdAndStatus(id,status).orElse(null);
     }

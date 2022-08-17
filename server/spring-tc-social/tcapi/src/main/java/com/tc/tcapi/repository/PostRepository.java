@@ -1,5 +1,6 @@
 package com.tc.tcapi.repository;
 
+import com.tc.core.enumm.EPostType;
 import com.tc.core.model.Post;
 import com.tc.core.model.User;
 import org.springframework.data.domain.Pageable;
@@ -14,9 +15,9 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    int countByUserAndStatusAndType(User user, int status, EPostType type);
 
     Optional<Post> findByIdAndUser(Long postId, User u);
-
 
     @Query(
             nativeQuery = true,
@@ -48,6 +49,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     )
     List<Post> getUserStoriesNative(@Param("userId") Long userId, Pageable pageable);
 
+    // Get Stories or Posts
     @Query(
             nativeQuery = true,
             value = "SELECT p.* FROM post p \n" +
@@ -70,5 +72,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     "WHERE p.user_id = :userId AND p.type =:type"
     )
     List<Post> findByUserAndTypeAndStatus(@Param("userId") Long userId,@Param("type")Integer type, Pageable pageable);
+
 
 }

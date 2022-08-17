@@ -1,9 +1,12 @@
 package com.tc.tcapi.service;
 
+import com.tc.core.model.ReviewPost;
 import com.tc.core.model.ReviewPostImage;
 import com.tc.tcapi.repository.ReviewPostImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +22,11 @@ public class ReviewPostAttachmentService {
         return repo.existsById(id);
     }
 
-
     public void save(ReviewPostImage attachment) {
          repo.save(attachment);
+    }
+
+    public List<ReviewPostImage> getImages(ReviewPost post,int status){
+        return repo.findByReviewPostAndStatusOrderByPosAsc(post,status);
     }
 }

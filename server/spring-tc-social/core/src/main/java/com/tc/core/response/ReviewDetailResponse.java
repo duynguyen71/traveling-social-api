@@ -3,9 +3,7 @@ package com.tc.core.response;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,11 +25,23 @@ public class ReviewDetailResponse implements Serializable {
 
     private int totalDay;
 
+    private  int numOfVisitor;
+
+    private  int numOfReaction;
+
+    private int numOfComment;
+
+    private boolean hasBookmark;
+
     private int status;
+
+    private ReactionResponse reaction;
 
     private FileUploadResponse coverImage;
 
     private Set<ReviewPostAttachmentResponse> images = new LinkedHashSet<>();
+
+    private Set<TagResponse> tags = new LinkedHashSet<>();
 
     private BaseUserResponse user;
 

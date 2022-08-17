@@ -9,9 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "review_post")
@@ -47,6 +45,12 @@ public class ReviewPost {
 
     private int status = 1;
 
+    @ManyToMany
+    @JoinTable(name = "review_post_tag",
+            joinColumns = {@JoinColumn(name = "review_post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+    private Set<Tag> tags = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -59,11 +63,17 @@ public class ReviewPost {
     @UpdateTimestamp
     private Date updateDate;
 
-    @OneToMany(mappedBy = "reviewPost")
+    @OneToMany(mappedBy = "reviewPost", fetch = FetchType.LAZY)
     private List<ReviewPostImage> images = new LinkedList<>();
 
-    @ManyToMany(mappedBy = "reviewPosts")
-    private List<Tag> reviewPostTags = new LinkedList<>();
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private Collection<ReviewPostComment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reviewPost", fetch = FetchType.LAZY)
+    private Collection<ReviewPostVisitor> visitors;
+
+    @OneToMany(mappedBy = "reviewPost")
+    private Collection<ReviewPostReaction> reactions = new ArrayList<>();
 
 
 }

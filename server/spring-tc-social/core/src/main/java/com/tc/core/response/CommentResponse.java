@@ -1,11 +1,15 @@
 package com.tc.core.response;
 
-import lombok.Data;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
-@Data
-public class CommentResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class CommentResponse implements Serializable {
 
     private Long id;
 
@@ -15,9 +19,10 @@ public class CommentResponse {
 
     private UserInfoResponse user;
 
+    private UserInfoResponse replyUser;
+
     private Date createDate;
 
     private Integer replyCount;
-
 
 }

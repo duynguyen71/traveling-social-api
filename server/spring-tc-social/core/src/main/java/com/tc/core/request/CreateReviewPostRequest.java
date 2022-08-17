@@ -5,9 +5,7 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +24,8 @@ public class CreateReviewPostRequest implements Serializable {
     private int numOfParticipant = 1;
 
     private int totalDay = 1;
+
+    private Set<TagRequest> tags = new HashSet<>();
 
     @NotBlank
     private String contentJson;

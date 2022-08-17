@@ -37,6 +37,8 @@ public class ReviewPostResponse implements Serializable {
 
     private List<ReviewPostAttachmentResponse> images = new LinkedList();
 
+    private List<TagResponse> tags = new LinkedList();
+
     private UserInfoResponse user;
 
     private Date createDate;

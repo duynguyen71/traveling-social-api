@@ -83,6 +83,9 @@ public class UserService {
 
     public List<User> getUsersHasRole(Role role) {
         return userRepo.findAllByRole(role);
+    }
 
+    public User getReviewPostAuth(Long reviewPostId){
+        return userRepo.findByReviewPosts_Id(reviewPostId).orElse(null);
     }
 }

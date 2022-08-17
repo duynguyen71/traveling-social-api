@@ -69,4 +69,7 @@ public class FileUpload {
     private Collection<ReviewPost> reviewPostCoverImages = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "attachment")
+    private Collection<ReviewPostComment> reviewPostComments;
+
 }

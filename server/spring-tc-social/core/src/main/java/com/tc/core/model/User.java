@@ -110,4 +110,13 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    @OneToMany(mappedBy = "user")
+    private Collection<ReviewPostComment> reviewPostComments;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<ReviewPostVisitor> reviewPostVisitors;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<ReviewPostReaction> reviewPostReactions;
+
 }

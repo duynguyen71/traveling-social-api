@@ -51,4 +51,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY total DESC\n" +
             "LIMIT 10) AS t2 ON t1.id = t2.user_id\n", nativeQuery = true)
     List<User> getTopActiveUsers();
+
+    Optional<User> findByReviewPosts_Id(Long id);
 }

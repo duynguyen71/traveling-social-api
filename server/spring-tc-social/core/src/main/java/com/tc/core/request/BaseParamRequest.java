@@ -1,17 +1,19 @@
 package com.tc.core.request;
 
 import com.tc.core.utilities.ValidationUtil;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.io.Serializable;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-public class BaseParamRequest {
+@AllArgsConstructor
+public class BaseParamRequest implements Serializable {
 
     private String sortBy = "create_date";
 
@@ -49,4 +51,9 @@ public class BaseParamRequest {
     public Pageable toPageRequest() {
         return PageRequest.of(this.page, this.pageSize, Sort.by(Sort.Direction.fromString(this.direction), this.sortBy));
     }
+
+    public Pageable toNativePageRequest() {
+        return PageRequest.of(this.page, this.pageSize, Sort.by(Sort.Direction.fromString("DESC"), "createDate"));
+    }
+
 }

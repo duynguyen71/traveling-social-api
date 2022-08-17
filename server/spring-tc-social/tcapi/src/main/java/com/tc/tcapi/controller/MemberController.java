@@ -25,7 +25,9 @@ public class MemberController {
     private final ChatGroupHelper chatGroupHelper;
     private final MessageHelper messageHelper;
     private final UserNotificationHelper userNotificationHelper;
-    private final ChatGroupUserHelper chatgroupUserHelper;
+    private final ReviewPostCommentHelper reviewPostCommentHelper;
+    private final TagHelper tagHelper;
+    private final ReviewPostReactionHelper reviewPostReactionHelper;
 
     @PutMapping("/users/me/using-app/{status}")
     public ResponseEntity<?> setUsingApp(@PathVariable Integer status) {
@@ -116,7 +118,6 @@ public class MemberController {
     }
 
 
-
     @GetMapping("/users/me/following")
     public ResponseEntity<?> getFollowingUsers(@RequestParam Map<String, String> param) {
         return userHelper.getFollowingUsers(param);
@@ -154,14 +155,29 @@ public class MemberController {
         return commentHelper.commentPost(id, postCommentRequest);
     }
 
+    @PostMapping("/review-posts/{id}/comments")
+    public ResponseEntity<?> commentReviewPost(@PathVariable("id") Long id, @RequestBody PostCommentRequest postCommentRequest) {
+        return reviewPostCommentHelper.commentPost(id, postCommentRequest);
+    }
+
     @GetMapping("/posts/{id}/comments")
     public ResponseEntity<?> getPostParentComments(@PathVariable("id") Long postId, @RequestParam Map<String, String> params) {
         return commentHelper.getRootComments(postId, params);
     }
 
+    @GetMapping("/review-posts/{id}/comments")
+    public ResponseEntity<?> getReviewPostParentComments(@PathVariable("id") Long postId, @RequestParam Map<String, String> params) {
+        return reviewPostCommentHelper.getRootComments(postId, params);
+    }
+
     @PutMapping("/comments/{commentId}/status/{status}")
     public ResponseEntity<?> updateCommentStatus(@PathVariable("commentId") Long commentId, @PathVariable("status") Integer status) {
         return commentHelper.updateCommentStatus(commentId, status);
+    }
+
+    @PutMapping("/review-posts/comments/{commentId}/status/{status}")
+    public ResponseEntity<?> updateReviewCommentStatus(@PathVariable("commentId") Long commentId, @PathVariable("status") Integer status) {
+        return reviewPostCommentHelper.updateCommentStatus(commentId, status);
     }
 
     /**
@@ -177,6 +193,11 @@ public class MemberController {
         return commentHelper.getReplyComments(commentId, params);
     }
 
+    @GetMapping("/review-posts/comments/{commentId}/reply")
+    public ResponseEntity<?> getReviewPostReplyComments(@PathVariable("commentId") Long commentId, @RequestParam Map<String, String> params) {
+        return reviewPostCommentHelper.getReplyComments(commentId, params);
+    }
+
     /**
      * drop reaction (post,story)
      */
@@ -190,30 +211,29 @@ public class MemberController {
         return postReactionHelper.getPostReactions(postId);
     }
 
-    //get current user review posts
-    @GetMapping("/users/me/reviews")
-    public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param) {
-        return reviewPostHelper.getCurrentUserReviewPosts(param);
-    }
-
     @GetMapping("/users/{userId}/reviews")
     public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param, @PathVariable("userId") Long userId) {
         return reviewPostHelper.getUserReviewPosts(userId, param);
     }
 
-    @GetMapping("/reviews")
+    @GetMapping("/review-posts")
     public ResponseEntity<?> getReviewPosts(@RequestParam Map<String, String> param) {
         return reviewPostHelper.getReviewPosts(param);
     }
 
     @PostMapping("/review-posts")
-    public ResponseEntity<?> createReviewPost(@RequestBody @Valid CreateReviewPostRequest request){
+    public ResponseEntity<?> createReviewPost(@RequestBody @Valid CreateReviewPostRequest request) {
         return reviewPostHelper.createReviewPost(request);
     }
 
     @GetMapping("/review-posts/{reviewId}")
     public ResponseEntity<?> getReviewPostDetail(@PathVariable("reviewId") Long reviewId) {
         return reviewPostHelper.getReviewPostDetail(reviewId);
+    }
+
+    @GetMapping("/review-posts/{reviewId}/auth")
+    public ResponseEntity<?> getAuthInfo(@PathVariable("reviewId") Long reviewId){
+        return reviewPostHelper.getAuth(reviewId);
     }
 
     @GetMapping("/users")
@@ -258,14 +278,6 @@ public class MemberController {
         return chatGroupHelper.getChatGroupDetail(groupId);
     }
 
-//    /**
-//     * get chat group user detail
-//     */
-//    @GetMapping("/users/me/chat-groups/users/{id}")
-//    public ResponseEntity<?> getChatGroupUserDetail(@PathVariable("id") Long chatGroupUserId){
-//        return chatgroupUserHelper.getChatGroupUserDetail(chatGroupUserId);
-//    }
-
     /**
      * Get group messages
      */
@@ -289,6 +301,56 @@ public class MemberController {
     public ResponseEntity<?> saveMessage(@PathVariable("groupId") Long chatGroupId, @RequestBody @Valid MessageRequest request) {
         return messageHelper.saveMessage(chatGroupId, request);
     }
+
+    /**
+     * Get tags by tagName
+     */
+    @GetMapping("/tags")
+    public ResponseEntity<?> getTags(@RequestParam Map<String, String> param) {
+        return tagHelper.getTags(param);
+    }
+
+    @GetMapping("/tags/{name}")
+    public ResponseEntity<?> getTagsByName(@PathVariable("name") String name) {
+        return tagHelper.getTagsByName(name);
+    }
+
+    @GetMapping("/review-posts/search")
+    public ResponseEntity<?> searchReviewPosts(@RequestParam Map<String, String> param) {
+        return reviewPostHelper.searchReviewPosts(param);
+    }
+
+    /**
+     * Get current user review posts
+     */
+    @GetMapping("/users/me/review-posts")
+    public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param) {
+        return reviewPostHelper.getCurrentUserReviewPosts(param);
+    }
+
+    /**
+     * Reaction review post
+     */
+    @PostMapping("/review-posts/reactions")
+    public ResponseEntity<?> reactionReviewPost(@RequestBody @Valid ReactionRequest request) {
+        return reviewPostReactionHelper.reactionPost(request);
+    }
+
+    /**
+     * Get bookmarks
+     */
+    @GetMapping("/review-posts/bookmarks")
+    public ResponseEntity<?> getBookmarkReviewPosts(@RequestParam Map<String, String> param) {
+        return reviewPostHelper.getBookmarkReviewPosts(param);
+    }
+    /**
+     * Bookmark review post
+     */
+    @PostMapping("/review-posts/bookmarks/{id}")
+    public ResponseEntity<?> bookmarkReviewPost(@PathVariable("id") Long id) {
+        return reviewPostHelper.bookmarkReviewPost(id);
+    }
+
 
 
 }

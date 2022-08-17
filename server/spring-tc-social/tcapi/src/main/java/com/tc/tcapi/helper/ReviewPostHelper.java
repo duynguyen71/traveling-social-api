@@ -1,21 +1,11 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.FileUpload;
-import com.tc.core.model.ReviewPost;
-import com.tc.core.model.ReviewPostImage;
-import com.tc.core.model.User;
-import com.tc.core.request.BaseParamRequest;
-import com.tc.core.request.CreateReviewPostRequest;
-import com.tc.core.request.ReviewPostAttachmentRequest;
-import com.tc.core.request.ReviewRequest;
-import com.tc.core.response.BaseResponse;
-import com.tc.core.response.BaseReviewPostResponse;
-import com.tc.core.response.ReviewDetailResponse;
-import com.tc.core.response.ReviewPostResponse;
-import com.tc.tcapi.service.FileStorageService;
-import com.tc.tcapi.service.ReviewPostAttachmentService;
-import com.tc.tcapi.service.ReviewService;
-import com.tc.tcapi.service.UserService;
+import com.tc.core.model.*;
+import com.tc.core.request.*;
+import com.tc.core.response.*;
+import com.tc.core.utilities.ValidationUtil;
+import com.tc.tcapi.repository.ReviewPostVisitorService;
+import com.tc.tcapi.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component("ReviewHelper")
@@ -32,86 +23,98 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReviewPostHelper {
 
-    private final ReviewService reviewService;
+    private final ReviewPostService reviewPostService;
     private final ModelMapper modelMapper;
     private final UserService userService;
     private final FileStorageService fileStorageService;
     private final ReviewPostAttachmentService attService;
-
-    public ResponseEntity<?> saveReview(ReviewRequest request) {
-        User user = userService.getCurrentUser();
-        Long reqId = request.getId();
-        ReviewPost review;
-        if (reqId != null && (review = reviewService.getByIdAndUser(reqId, user)) != null) {
-
-        } else {
-            review = new ReviewPost();
-            review.setUser(user);
-            review.setStatus(1);
-        }
-        review.setTitle(request.getTitle());
-        review.setCost(request.getCost());
-
-        review.setTotalDay(request.getTotalDay());
-        review.setNumOfParticipant(request.getTotalMember());
-
-        FileUpload coverPhoto = fileStorageService.getById(request.getCoverPhoto());
-        review.setCoverImage(coverPhoto);
-
-        for (Long id :
-                request.getPhotos()) {
-            FileUpload p = fileStorageService.getById(id);
-//            review.getImages().add(p);
-        }
-        review = reviewService.saveReview(review);
-
-        ReviewDetailResponse rs = modelMapper.map(review, ReviewDetailResponse.class);
-
-        return BaseResponse.success(rs, "save review post success");
-    }
+    private final TagService tagService;
+    private final ReviewPostVisitorService postVisitorService;
+    private final ReviewPostReactionService reactionService;
+    private final ReviewPostCommentService commentService;
+    private final PostService postService;
+    private final FollowService followService;
 
     public ResponseEntity<?> getReviewPosts(Map<String, String> param) {
 
         BaseParamRequest baseParamRequest = new BaseParamRequest(param);
         Pageable pageable = baseParamRequest.toPageRequest();
 
-        List<ReviewPost> reviews = reviewService.getReviewPosts(1, pageable);
+        List<ReviewPost> reviews = reviewPostService.getReviewPosts(1, pageable);
         List<BaseReviewPostResponse> rs = reviews.stream()
                 .map(r -> modelMapper.map(r, BaseReviewPostResponse.class))
                 .collect(Collectors.toList());
         return BaseResponse.success(rs, "get review posts success!");
     }
 
+    /**
+     * Get review post detail
+     */
     public ResponseEntity<?> getReviewPostDetail(Long reviewId) {
-        ReviewPost review = reviewService.getByIdAndStatus(reviewId, 1);
+        ReviewPost review = reviewPostService.getByIdAndStatus(reviewId, 1);
         if (review != null) {
+            //save visitor
+            User currentUser = userService.getCurrentUser();
+            ReviewPostVisitor visitor = postVisitorService.getByUserAndReviewPost(currentUser, review);
+            if (visitor == null) {
+                ReviewPostVisitor reviewPostVisitor = new ReviewPostVisitor();
+                reviewPostVisitor.setUser(currentUser);
+                reviewPostVisitor.setReviewPost(review);
+                reviewPostVisitor.setStatus(0);
+                postVisitorService.save(reviewPostVisitor);
+            }
+            // get review post detail
             ReviewDetailResponse rs = modelMapper.map(review, ReviewDetailResponse.class);
-
+            // count viewer
+            int countVisitor = postVisitorService.countVisitor(review);
+            rs.setNumOfVisitor(countVisitor);
+            // count reaction
+            int countReaction = reactionService.countAllActiveReaction(review);
+            rs.setNumOfReaction(countReaction);
+            // count comment
+            rs.setNumOfComment(commentService.countAllActiveComments(review));
+            //get current user reaction
+            ReviewPostReaction userReaction = reactionService.getUserReaction(review, currentUser, 1);
+            if (userReaction != null) {
+                rs.setReaction(modelMapper.map(userReaction, ReactionResponse.class));
+            }
+            // check is bookmark
+            boolean bookmark = postVisitorService.hasBookmark(currentUser.getId(), reviewId);
+            rs.setHasBookmark(bookmark);
+            // get attachments
+            List<ReviewPostImage> images = attService.getImages(review, 1);
+            rs.setImages(images.stream()
+                    .map(i -> modelMapper.map(i, ReviewPostAttachmentResponse.class)).collect(Collectors.toSet()));
             return BaseResponse.success(rs, "Get review post detail with id: " + reviewId + " success!");
         }
         return BaseResponse.badRequest("Can not find review post with id: " + reviewId);
     }
 
+    // get current user review-posts
     public ResponseEntity<?> getCurrentUserReviewPosts(Map<String, String> param) {
         User currentUser = userService.getCurrentUser();
         BaseParamRequest baseParamRequest = new BaseParamRequest(param);
-        List<ReviewPost> reviews = reviewService.getUserReviewPosts(currentUser, baseParamRequest.getStatus(), baseParamRequest.toPageRequest());
-        List<ReviewPostResponse> rs = reviews.stream()
-                .map(r -> modelMapper.map(r, ReviewPostResponse.class))
-                .collect(Collectors.toList());
+        List<ReviewPost> reviews = reviewPostService.getUserReviewPosts(currentUser, 1, baseParamRequest.toPageRequest());
+        List<ReviewPostReport> rs = reviews.stream()
+                .map(r -> {
+                    ReviewPostReport reviewPostReport = modelMapper.map(r, ReviewPostReport.class);
+                    reviewPostReport.setNumOfComment(commentService.countAllActiveComments(r));
+                    reviewPostReport.setNumOfVisitor(postVisitorService.countVisitor(r));
+                    reviewPostReport.setNumOfLike(reactionService.countAllActiveReaction(r));
+                    return reviewPostReport;
+                }).collect(Collectors.toList());
         return BaseResponse.success(rs, "get current user review posts success");
     }
 
     public ResponseEntity<?> getUserReviewPosts(Long userId, Map<String, String> param) {
         User currentUser = userService.getById(userId);
         BaseParamRequest baseParamRequest = new BaseParamRequest(param);
-        List<ReviewPost> reviews = reviewService.getUserReviewPosts(currentUser, 1, baseParamRequest.toPageRequest());
+        List<ReviewPost> reviews = reviewPostService.getUserReviewPosts(currentUser, 1, baseParamRequest.toPageRequest());
         List<ReviewPostResponse> rs = reviews.stream()
                 .map(r -> modelMapper.map(r, ReviewPostResponse.class))
                 .collect(Collectors.toList());
         return BaseResponse.success(rs, "get user review posts success");
     }
-
 
     public ResponseEntity<?> createReviewPost(CreateReviewPostRequest request) {
         Long id = request.getId();
@@ -122,7 +125,7 @@ public class ReviewPostHelper {
         String contentJson = request.getContentJson();
         ReviewPost reviewPost;
         User currentUser = userService.getCurrentUser();
-        if (id == null || (reviewPost = reviewService.getByIdAndUser(id, currentUser)) == null)
+        if (id == null || (reviewPost = reviewPostService.getByIdAndUser(id, currentUser)) == null)
             reviewPost = new ReviewPost();
         reviewPost.setTitle(title);
         reviewPost.setContent(content);
@@ -137,8 +140,30 @@ public class ReviewPostHelper {
             return BaseResponse.badRequest("Create review post failed: cover image not found");
         }
         reviewPost.setCoverImage(coverImage);
-        reviewPost = reviewService.saveFlush(reviewPost);
-
+        reviewPost = reviewPostService.saveFlush(reviewPost);
+        // Save tags
+        Set<TagRequest> tags = request.getTags();
+        for (TagRequest tagReq :
+                tags) {
+            Tag tag;
+            Long tagReqId = tagReq.getId();
+            if (tagReqId != null && tagService.existsById(tagReqId)) {
+                tag = tagService.getById(tagReqId);
+            } else {
+                String tagReqName = tagReq.getName();
+                boolean isNameBlank = ValidationUtil.isNullOrBlank(tagReqName);
+                if (isNameBlank) continue;
+                if (tagService.existsByName(tagReqName)) {
+                    tag = tagService.getByName(tagReqName);
+                } else {
+                    tag = Tag.builder().name(tagReqName).build();
+                    tag = tagService.saveFlush(tag);
+                }
+            }
+            tag.getReviewPosts().add(reviewPost);
+            reviewPost.getTags().add(tag);
+            reviewPost = reviewPostService.saveFlush(reviewPost);
+        }
         // Save photo
         for (ReviewPostAttachmentRequest attachmentRequest : attachments) {
             Long attachmentRequestId = attachmentRequest.getId();
@@ -147,6 +172,7 @@ public class ReviewPostHelper {
                 attachment = new ReviewPostImage();
             attachment.setStatus(attachmentRequest.getStatus());
             attachment.setPos(attachmentRequest.getPos());
+            // set attachment photo
             Long photoRequestId = attachmentRequest.getImageId();
             FileUpload photo = fileStorageService.getById(photoRequestId);
             if (photoRequestId == null || photo == null) {
@@ -158,6 +184,58 @@ public class ReviewPostHelper {
         }
         log.info("Create review post success id:{}", reviewPost.getId());
         return BaseResponse.success(modelMapper.map(reviewPost, ReviewPostResponse.class), "Create review post success!");
+
+    }
+
+    public ResponseEntity<?> searchReviewPosts(Map<String, String> param) {
+        BaseParamRequest paramRequest = new BaseParamRequest(param);
+        String keyWord = null;
+        if (!ValidationUtil.isNullOrBlank(param.get("keyWord"))) {
+            keyWord = param.get("keyWord");
+        }
+        Pageable pageable = paramRequest.toPageRequest();
+        List<ReviewPost> posts = reviewPostService.searchPosts("%" + keyWord + "%", "%" + keyWord + "%", pageable);
+        List<BaseReviewPostResponse> data = posts.stream()
+                .map(reviewPost ->
+                        modelMapper.map(reviewPost, BaseReviewPostResponse.class))
+                .toList();
+        return BaseResponse.success(data, "search review posts by keyword " + keyWord + " success");
+    }
+
+
+    public ResponseEntity<?> getBookmarkReviewPosts(Map<String, String> param) {
+        Pageable pageable = new BaseParamRequest(param).toNativePageRequest();
+        User user = userService.getCurrentUser();
+        List<ReviewPost> bookmarks = reviewPostService.getBookmarks(user, 1, pageable);
+        List<BaseReviewPostResponse> data = bookmarks.stream()
+                .map(reviewPost -> modelMapper.map(reviewPost, BaseReviewPostResponse.class))
+                .toList();
+        return BaseResponse.success(data, "Get bookmarks success!");
+    }
+
+    public ResponseEntity<?> bookmarkReviewPost(Long id) {
+        ReviewPostVisitor visit =
+                postVisitorService.getByUserAndReviewPost(userService.getCurrentUser(), reviewPostService.getById(id));
+        if (visit == null) {
+            visit = new ReviewPostVisitor();
+            visit.setUser(userService.getCurrentUser());
+            visit.setReviewPost(reviewPostService.getById(id));
+            visit.setStatus(1);
+        }
+        visit.setStatus(1);
+        postVisitorService.save(visit);
+        return BaseResponse.success("Bookmark review post " + id + " success!");
+    }
+
+    public ResponseEntity<?> getAuth(Long reviewId) {
+        User user = userService.getReviewPostAuth(reviewId);
+        if (user == null) return BaseResponse.badRequest("Can not find auth");
+        ReviewPostAuthResponse data = modelMapper.map(user, ReviewPostAuthResponse.class);
+        data.setNumOfReviewPost(reviewPostService.countActiveReviewPost(user));
+        data.setNumOfPost(postService.countActivePost(user));
+        data.setNumOfFollower(followService.countFollowers(user, 1));
+        data.setIsFollowing(followService.isFollowed(user, userService.getCurrentUser(), 1));
+        return BaseResponse.success(data, "Get auth success!");
 
     }
 }

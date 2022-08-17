@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,29 +31,8 @@ public class PostHelper {
     private final PostReactionService postReactionService;
     private final PostCommentService postCommentService;
     private final ObjectMapperUtils om;
-    private final ReviewService reviewPostService;
+    private final ReviewPostService reviewPostService;
     private final FileService fileService;
-
-    //    /* Create review post*/
-//    @Transactional
-//    public synchronized  ResponseEntity<?> createReviewPost(ReviewPostRequest reviewPostRequest, Long coverImageId,Long[] imageIds){
-    public ResponseEntity<?> createReviewPost(ReviewPostRequest reviewPostRequest, Long coverImageId, Long[] imageIds) {
-//        ReviewPost reviewPost = this.om.map(reviewPostRequest, ReviewPost.class);
-//        ReviewPost savedReviewPost = reviewPostService.save(reviewPost);
-//        FileUpload coverImage = fileStorageService.getById(coverImageId);
-//        List<FileUpload> reviewPostImage = new ArrayList<>();
-//        for (Long imageId : imageIds) {
-//            FileUpload foundFile = fileService.findOne(imageId);
-//            if (foundFile != null){
-//                reviewPostImage.add(foundFile);
-////                foundFile.setReviewPost(savedReviewPost);
-//            }
-//        }
-////        savedReviewPost.setReviewPostImages(reviewPostImage);
-//        savedReviewPost.setCoverImage(coverImage);
-//        return BaseResponse.success(savedReviewPost.getId(), "CREATED");
-        return null;
-    }
 
     /**
      * Lay ra cac bai post cua user hien tai
@@ -172,10 +153,15 @@ public class PostHelper {
     public ResponseEntity<?> getStories(Map<String, String> params) {
         User currentUser = userService.getCurrentUser();
         BaseParamRequest baseParamRequest = new BaseParamRequest(params);
-
         Pageable pageable = baseParamRequest.toPageRequest();
         List<Post> posts = postService.getUserStories(currentUser, pageable);
-        List<PostResponse> data = posts.stream()
+        List<Post> copy = new ArrayList<>(posts);
+        List<Post> randomPosts = new ArrayList<>();
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < Math.min(baseParamRequest.getPageSize(), posts.size()); i++) {
+            randomPosts.add(copy.remove(secureRandom.nextInt(copy.size())));
+        }
+        List<PostResponse> data = randomPosts.stream()
                 .map(post -> {
                     PostResponse postResponse = modelMapper.map(post, PostResponse.class);
                     List<PostContent> postContents = postService.getPostContents(post);
@@ -198,7 +184,13 @@ public class PostHelper {
         BaseParamRequest baseParamRequest = new BaseParamRequest(params);
         Pageable pageable = baseParamRequest.toPageRequest();
         List<Post> posts = postService.getPosts(currentUser, pageable);
-        List<PostResponse> data = posts.stream()
+        List<Post> copy = new ArrayList<>(posts);
+        List<Post> randomPosts = new ArrayList<>();
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < Math.min(baseParamRequest.getPageSize(), posts.size()); i++) {
+            randomPosts.add(copy.remove(secureRandom.nextInt(copy.size())));
+        }
+        List<PostResponse> data = randomPosts.stream()
                 .map(post -> {
                     PostResponse postResponse = modelMapper.map(post, PostResponse.class);
                     postResponse.setReactionCount(postReactionService.countReactions(post));

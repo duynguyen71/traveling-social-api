@@ -30,7 +30,6 @@ public class UserNotificationHelper {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final NotificationObjectService notificationObjectService;
-    private final PostService postService;
 
     /**
      * Get current user notifications

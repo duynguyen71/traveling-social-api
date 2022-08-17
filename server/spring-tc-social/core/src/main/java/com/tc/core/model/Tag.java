@@ -1,9 +1,6 @@
 package com.tc.core.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,6 +8,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tag")
@@ -18,17 +16,16 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Tag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "review_post_tag",
-            joinColumns = {@JoinColumn(name = "tag_id")},
-            inverseJoinColumns = {@JoinColumn(name = "review_post_id")})
+    @ManyToMany(mappedBy = "tags")
     private List<ReviewPost> reviewPosts = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -38,4 +35,17 @@ public class Tag {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date updateDate;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(id, tag.id) && Objects.equals(name, tag.name) && Objects.equals(createDate, tag.createDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, createDate);
+    }
 }
