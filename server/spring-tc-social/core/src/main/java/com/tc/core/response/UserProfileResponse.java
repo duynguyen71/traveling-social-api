@@ -30,5 +30,5 @@ public class UserProfileResponse implements Serializable {
 
     private Date createDate;
 
-    private Boolean isFollowed = false;
+    private Boolean isFollowing = false;
 }

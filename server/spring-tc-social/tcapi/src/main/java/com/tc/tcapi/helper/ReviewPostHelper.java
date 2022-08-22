@@ -183,6 +183,9 @@ public class ReviewPostHelper {
 
     }
 
+    /**
+     * search by title, tagName
+     */
     public ResponseEntity<?> searchReviewPosts(Map<String, String> param) {
         BaseParamRequest paramRequest = new BaseParamRequest(param);
         String keyWord = null;
@@ -229,7 +232,7 @@ public class ReviewPostHelper {
         ReviewPostAuthResponse data = modelMapper.map(user, ReviewPostAuthResponse.class);
         data.setNumOfReviewPost(reviewPostService.countActiveReviewPost(user));
         data.setNumOfPost(postService.countActivePost(user));
-        data.setNumOfFollower(followService.countFollowers(user, 1));
+        data.setNumOfFollower(followService.countFollower(user, 1));
         data.setIsFollowing(followService.isFollowed(user, userService.getCurrentUser(), 1));
         return BaseResponse.success(data, "Get auth success!");
 
@@ -252,5 +255,14 @@ public class ReviewPostHelper {
         }
         data.setImages(attachmentResponses);
         return BaseResponse.success(data, "get current user review post detail success!");
+    }
+
+    public ResponseEntity<?> removeBookmark(Long id) {
+        ReviewPostVisitor bookmarkedReviewPost = postVisitorService.getBookmarkedReviewPost(id, userService.getCurrentUser().getId());
+        if (bookmarkedReviewPost == null)
+            return BaseResponse.badRequest("Bookmark review post id: " + id + "was not existed!");
+        bookmarkedReviewPost.setStatus(0);
+        postVisitorService.save(bookmarkedReviewPost);
+        return BaseResponse.success("Remove bookmark post: " + id + " success!");
     }
 }

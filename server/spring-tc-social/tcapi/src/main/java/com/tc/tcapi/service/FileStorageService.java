@@ -8,6 +8,7 @@ import com.tc.tcapi.repository.FileUploadRepository;
 import com.tc.core.response.FileUploadResponse;
 import com.tc.core.utilities.ValidationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -145,5 +147,9 @@ public class FileStorageService {
 
     public FileUpload getByName(String name) {
         return fileUploadRepo.findByName(name).orElse(null);
+    }
+
+    public List<FileUpload> getUploadedFiles(Long userId, Pageable pageRequest){
+        return fileUploadRepo.getUploadedFiles(userId,pageRequest);
     }
 }

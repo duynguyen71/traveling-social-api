@@ -29,12 +29,12 @@ public class FollowService {
         return followRepo.getFollowingNative(userId,pageable);
 
     }
-    public int countFollowers(User user, int active) {
-        return followRepo.countByUserAndActive(user,active);
+    public int countFollowing(User user, int status) {
+        return followRepo.countByFollowerAndStatus(user,status);
     }
 
-    public int countFollowingUsers(User user,int active) {
-        return followRepo.countByFollowerAndActive(user,active);
+    public int countFollower(User user, int status) {
+        return followRepo.countByUserAndStatus(user,status);
     }
 
     public Follow getByUserAndFollower(User user,User follower){

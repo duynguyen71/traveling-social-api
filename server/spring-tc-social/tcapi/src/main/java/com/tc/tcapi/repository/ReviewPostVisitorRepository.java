@@ -15,8 +15,10 @@ public interface ReviewPostVisitorRepository extends JpaRepository<ReviewPostVis
     List<ReviewPostVisitor> getByReviewPost(ReviewPost reviewPost);
 
     int countByReviewPost(ReviewPost reviewPost);
+    Optional<ReviewPostVisitor> findByReviewPost_IdAndUser_IdAndStatus(Long reviewPost, Long user,Integer status);
 
     Optional<ReviewPostVisitor> findByReviewPostAndUser(ReviewPost reviewPost, User user);
+
 
     boolean existsByUser_IdAndReviewPost_IdAndStatus(Long userId, Long reviewPostId, Integer status);
 

@@ -20,6 +20,10 @@ public class ReviewPostVisitorService {
         return repo.findByReviewPostAndUser(review, user).orElse(null);
     }
 
+    public  ReviewPostVisitor getBookmarkedReviewPost(Long reviewPostId,Long userId){
+        return repo.findByReviewPost_IdAndUser_IdAndStatus(reviewPostId,userId,1).orElse(null);
+    }
+
     public int countVisitor(ReviewPost review) {
         return repo.countByReviewPost(review);
     }

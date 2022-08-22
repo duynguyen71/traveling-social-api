@@ -1,9 +1,14 @@
 package com.tc.core.response;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
-public class UserInfoResponse {
+import java.io.Serializable;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserInfoResponse implements Serializable {
 
     private Long id;
 
@@ -19,5 +24,5 @@ public class UserInfoResponse {
 
     private String background;
 
-    private Boolean isFollowed = false;
+    private Boolean isFollowing = false;
 }

@@ -30,7 +30,6 @@ public class PostHelper {
     private final FileStorageService fileStorageService;
     private final PostReactionService postReactionService;
     private final PostCommentService postCommentService;
-    private final ObjectMapperUtils om;
     private final ReviewPostService reviewPostService;
     private final FileService fileService;
 
@@ -57,6 +56,9 @@ public class PostHelper {
                     PostReaction postReaction = postReactionService.getByUser(currentUser, post, 1);
                     if (postReaction != null)
                         postResponse.setMyReaction(modelMapper.map(postReaction.getReaction(), ReactionResponse.class));
+                    // count comment
+                    int commentCount = postCommentService.countAllComments(post);
+                    postResponse.setCommentCount(commentCount);
                     return postResponse;
                 }).collect(Collectors.toList());
 

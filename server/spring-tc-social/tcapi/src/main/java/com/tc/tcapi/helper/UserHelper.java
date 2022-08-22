@@ -77,7 +77,7 @@ public class UserHelper {
         List<UserInfoResponse> data = users.stream()
                 .map(u -> {
                     UserInfoResponse userInfoResponse = modelMapper.map(u, UserInfoResponse.class);
-                    userInfoResponse.setIsFollowed(followService.isFollowed(u, user, 1));
+                    userInfoResponse.setIsFollowing(followService.isFollowed(u, user, 1));
                     return userInfoResponse;
                 })
                 .collect(Collectors.toList());
@@ -234,10 +234,17 @@ public class UserHelper {
 
     public ResponseEntity<?> getFollowers(Map<String, String> param) {
         BaseParamRequest baseParamRequest = new BaseParamRequest(param);
+        User currentUser = userService.getCurrentUser();
         List<Follow> follows = followService
-                .getFollowers(userService.getCurrentUser().getId(), baseParamRequest.toPageRequest());
+                .getFollowers(currentUser.getId(), baseParamRequest.toPageRequest());
         List<UserInfoResponse> rs = follows.stream()
-                .map(f -> modelMapper.map(f.getFollower(), UserInfoResponse.class))
+                .map(f -> {
+                    UserInfoResponse map = modelMapper.map(f.getFollower(), UserInfoResponse.class);
+                    // check current user follow f.User()
+                    boolean i = followService.isFollowed(f.getFollower(), currentUser, 1);
+                    map.setIsFollowing(i);
+                    return map;
+                })
                 .toList();
         return BaseResponse.success(rs, "get followers success!");
     }
@@ -276,8 +283,8 @@ public class UserHelper {
     public ResponseEntity<?> getCurrentUserDetail() {
         User user = userService.getById(userService.getCurrentUser().getId());
         UserDetailResponse detail = modelMapper.map(user, UserDetailResponse.class);
-        int followerCounts = followService.countFollowers(user, 1);
-        int followingCounts = followService.countFollowingUsers(user, 1);
+        int followerCounts = followService.countFollowing(user, 1);
+        int followingCounts = followService.countFollower(user, 1);
         detail.setFollowerCounts(followerCounts);
         detail.setFollowingCounts(followingCounts);
         return BaseResponse.success(detail, "get current user detail success!");
@@ -289,11 +296,11 @@ public class UserHelper {
         if (user == null)
             return BaseResponse.badRequest("Can not find user with id: " + userId);
         UserProfileResponse userInfoResponse = modelMapper.map(user, UserProfileResponse.class);
-        int followerCounts = followService.countFollowers(user, 1);
-        int followingCounts = followService.countFollowingUsers(user, 1);
+        int followerCounts = followService.countFollowing(user, 1);
+        int followingCounts = followService.countFollower(user, 1);
         userInfoResponse.setFollowerCounts(followerCounts);
         userInfoResponse.setFollowingCounts(followingCounts);
-        userInfoResponse.setIsFollowed(followService.isFollowed(user, userService.getCurrentUser(), 1));
+        userInfoResponse.setIsFollowing(followService.isFollowed(user, userService.getCurrentUser(), 1));
         return BaseResponse.success(userInfoResponse, "Get user with id: " + userId + " success");
     }
 

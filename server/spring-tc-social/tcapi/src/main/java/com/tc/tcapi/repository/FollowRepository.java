@@ -14,10 +14,13 @@ import java.util.Optional;
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
+    // count followers of user
+    // xem so nguoi theo doi user
+    int countByUserAndStatus(User user, int status);
 
-    int countByUserAndActive(User user, int active);
-
-    int countByFollowerAndActive(User follower, int active);
+    // count num of following of user
+    // xem user theo doi bao nhiu nguoi
+    int countByFollowerAndStatus(User user, int status);
 
     Optional<Follow> findByUserAndFollower(User user, User follower);
 
@@ -29,7 +32,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
                     "WHERE u.id = :userId\n" +
                     "AND f.status = 1"
     )
-    List<Follow> getFollowerNative(@Param("userId") Long userId,Pageable pageable);
+    List<Follow> getFollowerNative(@Param("userId") Long userId, Pageable pageable);
 
     @Query(
             nativeQuery = true,
@@ -39,8 +42,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
                     "WHERE u.id = :userId\n" +
                     "AND f.status = 1"
     )
-    List<Follow> getFollowingNative(@Param("userId") Long userId,Pageable pageable);
+    List<Follow> getFollowingNative(@Param("userId") Long userId, Pageable pageable);
 
 
-    boolean existsByUserAndFollowerAndStatus(User user,User follower,Integer status);
+    boolean existsByUserAndFollowerAndStatus(User user, User follower, Integer status);
 }

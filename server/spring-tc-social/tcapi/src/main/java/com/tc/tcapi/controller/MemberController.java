@@ -59,6 +59,11 @@ public class MemberController {
         return userHelper.getUserProfile(userId);
     }
 
+    @GetMapping("/users/{userId}/file-uploads")
+    public ResponseEntity<?> getUploadedMediaFiles(@PathVariable("userId") Long userId, @RequestParam Map<String, String> param) {
+        return fileUploadHelper.getUploadedFiles(userId, param);
+    }
+
     @PutMapping("/users/me/avt")
     public ResponseEntity<?> uploadAvt(@RequestParam("file") MultipartFile file) {
         return userHelper.updateAvt(file);
@@ -232,7 +237,7 @@ public class MemberController {
     }
 
     @GetMapping("/review-posts/{reviewId}/auth")
-    public ResponseEntity<?> getAuthInfo(@PathVariable("reviewId") Long reviewId){
+    public ResponseEntity<?> getAuthInfo(@PathVariable("reviewId") Long reviewId) {
         return reviewPostHelper.getAuth(reviewId);
     }
 
@@ -327,6 +332,7 @@ public class MemberController {
     public ResponseEntity<?> getCurrentUserReviewPosts(@RequestParam Map<String, String> param) {
         return reviewPostHelper.getCurrentUserReviewPosts(param);
     }
+
     /**
      * Get current user review posts detail
      */
@@ -350,6 +356,7 @@ public class MemberController {
     public ResponseEntity<?> getBookmarkReviewPosts(@RequestParam Map<String, String> param) {
         return reviewPostHelper.getBookmarkReviewPosts(param);
     }
+
     /**
      * Bookmark review post
      */
@@ -358,6 +365,10 @@ public class MemberController {
         return reviewPostHelper.bookmarkReviewPost(id);
     }
 
+    @PutMapping("/review-posts/bookmarks/{id}")
+    public ResponseEntity<?> removeBookmarks(@PathVariable("id") Long id) {
+        return reviewPostHelper.removeBookmark(id);
 
+    }
 
 }

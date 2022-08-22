@@ -55,7 +55,7 @@ public class PostCommentService {
     }
 
 
-    public Integer countAllComments(Post post) {
+    public int countAllComments(Post post) {
         return commentRepo.countByPostAndStatus(post, 1);
     }
 
