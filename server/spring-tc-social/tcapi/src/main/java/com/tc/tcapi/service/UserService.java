@@ -88,4 +88,5 @@ public class UserService {
     public User getReviewPostAuth(Long reviewPostId){
         return userRepo.findByReviewPosts_Id(reviewPostId).orElse(null);
     }
+
 }

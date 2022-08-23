@@ -29,6 +29,10 @@ public class UserDetailResponse implements Serializable {
 
     private String background;
 
+    private String website;
+
+    private Date birthdate;
+
     private Date createDate;
 
 

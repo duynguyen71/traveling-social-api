@@ -26,6 +26,10 @@ public class UserProfileResponse implements Serializable {
 
     private String bio;
 
+    private String website;
+
+    private Date birthdate;
+
     private String background;
 
     private Date createDate;

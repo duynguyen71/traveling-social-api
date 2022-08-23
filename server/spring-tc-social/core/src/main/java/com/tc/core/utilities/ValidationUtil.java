@@ -1,11 +1,17 @@
 package com.tc.core.utilities;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class ValidationUtil {
 
     public static boolean isNullOrBlank(String str) {
@@ -57,11 +63,27 @@ public class ValidationUtil {
     }
 
     public static boolean isImage(MultipartFile file) {
-        if(StringUtils.cleanPath(file.getOriginalFilename()).contains("..")){
+        if (StringUtils.cleanPath(file.getOriginalFilename()).contains("..")) {
             return false;
         }
         String contentType = file.getContentType();
         return contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("application/octet-stream");
+    }
+
+
+    public static Date tryParseDate(final String date) {
+        if (isNullOrBlank(date)) {
+            return null;
+        }
+        SimpleDateFormat format = (date.charAt(2) == '/') ? new SimpleDateFormat("dd/MMM/yyyy")
+                : new SimpleDateFormat("dd-MMM-yy");
+        try {
+            return format.parse(date);
+        } catch (ParseException e) {
+            log.info("Failed to parse date - {} ", e);
+            return null;
+            // Log a complaint and include date in the complaint
+        }
     }
 
 }

@@ -79,6 +79,11 @@ public class MemberController {
         return userHelper.getCurrentUserDetail();
     }
 
+    @PutMapping("/users/me")
+    public ResponseEntity<?> updateBaseUserInfo(@Valid @RequestBody UpdateBaseInfoRequest request) {
+        return userHelper.updateBaseUserInfo(request);
+    }
+
     /**
      * Get current user notifications
      */

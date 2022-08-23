@@ -6,10 +6,7 @@ import com.tc.core.exception.FileUploadException;
 import com.tc.core.model.FileUpload;
 import com.tc.core.model.Follow;
 import com.tc.core.model.User;
-import com.tc.core.request.BaseParamRequest;
-import com.tc.core.request.RegistrationRequest;
-import com.tc.core.request.ResetPasswordRequest;
-import com.tc.core.request.UserUpdateRequest;
+import com.tc.core.request.*;
 import com.tc.core.response.*;
 import com.tc.core.utilities.ValidationUtil;
 import com.tc.tcapi.service.*;
@@ -28,6 +25,7 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -197,20 +195,20 @@ public class UserHelper {
             switch (input) {
                 case "username": {
                     if (value.length() < 4 || value.length() > 15) {
-                        return BaseResponse.badRequest("username must between 4 and 15");
+                        return BaseResponse.badRequest("Username must between 4 and 15");
                     } else if (userService.existByUsername(value)) {
-                        return BaseResponse.conflict("username has been used!");
+                        return BaseResponse.conflict("Username has been used!");
                     }
                     break;
                 }
                 case "email": {
                     if (ValidationUtil.isEmail(value)) {
                         if (userService.existByEmail(value)) {
-                            return BaseResponse.conflict("email has been used");
+                            return BaseResponse.conflict("Email has been used");
                         }
                         break;
                     } else {
-                        return BaseResponse.badRequest("email is not valid!");
+                        return BaseResponse.badRequest("Email is not valid!");
                     }
                 }
                 case "phone": {
@@ -371,5 +369,37 @@ public class UserHelper {
                 .map(user -> modelMapper.map(user, BaseUserResponse.class))
                 .collect(Collectors.toList());
         return BaseResponse.success(data, "get member users success!");
+    }
+
+    /**
+     * Update base user info
+     */
+    public ResponseEntity<?> updateBaseUserInfo(UpdateBaseInfoRequest request) {
+        String newUsername = request.getUsername();
+        User user = userService
+                .getCurrentUser();
+        if (!ValidationUtil.isNullOrBlank(newUsername)
+                && !Objects.equals(user.getUsername(), newUsername)
+                && !userService.existByUsername(newUsername)) {
+            user.setUsername(newUsername);
+        }
+        String newBio = request.getBio();
+        if (!ValidationUtil.isNullOrBlank(newBio)) {
+            user.setBio(newBio);
+        }
+        String newWebsite = request.getWebsite();
+        if (!ValidationUtil.isNullOrBlank(newWebsite)) {
+            user.setWebsite(newWebsite);
+        }
+        String newFullName = request.getFullName();
+        if (!ValidationUtil.isNullOrBlank(request.getFullName())) {
+            user.setFullName(newFullName);
+        }
+        Date birthdate = ValidationUtil.tryParseDate(request.getBirthdate());
+        if (birthdate != null) {
+            user.setBirthdate(birthdate);
+        }
+        userService.save(user);
+        return BaseResponse.success("Update base user info success!");
     }
 }

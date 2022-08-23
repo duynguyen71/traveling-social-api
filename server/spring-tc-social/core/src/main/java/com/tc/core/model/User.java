@@ -1,11 +1,9 @@
 package com.tc.core.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -43,9 +41,14 @@ public class User implements Serializable {
 
     private String bio;
 
+    private String website;
+
     private String background;
 
     private Integer isUsingApp;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date birthdate;
 
     //
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "uploadBy")
