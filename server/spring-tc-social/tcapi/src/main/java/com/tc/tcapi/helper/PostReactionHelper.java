@@ -1,9 +1,9 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.Post;
-import com.tc.core.model.PostReaction;
-import com.tc.core.model.Reaction;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.Post;
+import com.tc.tcapi.model.PostReaction;
+import com.tc.tcapi.model.Reaction;
+import com.tc.tcapi.model.User;
 import com.tc.core.request.ReactionRequest;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.PostReactionResponse;

@@ -1,14 +1,13 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.ChatGroup;
-import com.tc.core.model.ChatGroupUser;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ChatGroup;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.ChatGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -23,8 +22,8 @@ public class ChatGroupService {
     }
 
     //get user chat groups
-    public List<ChatGroup> getGroups(User user, Integer status) {
-        List<ChatGroup> groups = repo.findByUsers_UserAndStatus(user, status);
+    public List<ChatGroup> getGroups(User user, Integer status, Pageable pageable) {
+        List<ChatGroup> groups = repo.findByUsers_UserAndStatus(user, status,pageable);
         return groups;
     }
 

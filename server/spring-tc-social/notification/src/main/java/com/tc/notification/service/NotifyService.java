@@ -5,7 +5,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.tc.notification.request.NotificationRequest;
+import com.tc.core.request.NotificationRequest;
 import com.tc.notification.request.SubscriptionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +21,6 @@ public class NotifyService {
     public String sendPnsToDevice(NotificationRequest request) {
         Message message = Message.builder()
                 .setToken(request.getTarget())
-//                .setNotification(Notification.builder()
-//                        .setTitle(request.getTitle())
-//                        .setBody(request.getBody()).build())
-//                .putData("content", request.getTitle())
                 .putData("target", request.getTarget())
                 .putData("title", request.getTitle())
                 .putData("body", request.getBody())

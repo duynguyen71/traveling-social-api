@@ -1,9 +1,8 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.Post;
-import com.tc.core.model.ReviewPost;
-import com.tc.core.model.ReviewPostComment;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ReviewPost;
+import com.tc.tcapi.model.ReviewPostComment;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.ReviewPostCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

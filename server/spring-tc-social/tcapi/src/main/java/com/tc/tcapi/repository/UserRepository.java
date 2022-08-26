@@ -1,7 +1,7 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.Role;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.Role;
+import com.tc.tcapi.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

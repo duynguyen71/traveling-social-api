@@ -1,10 +1,10 @@
 package com.tc.tcapi.helper;
 
 import com.tc.core.exception.FileUploadException;
-import com.tc.core.model.FileUpload;
-import com.tc.core.request.BaseParamRequest;
+import com.tc.tcapi.model.FileUpload;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.FileUploadResponse;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;

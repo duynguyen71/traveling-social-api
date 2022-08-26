@@ -1,14 +1,14 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.FileUpload;
-import com.tc.core.model.Post;
-import com.tc.core.model.PostComment;
-import com.tc.core.model.User;
-import com.tc.core.request.BaseParamRequest;
+import com.tc.tcapi.model.FileUpload;
+import com.tc.tcapi.model.Post;
+import com.tc.tcapi.model.PostComment;
+import com.tc.tcapi.model.User;
 import com.tc.core.request.PostCommentRequest;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.CommentResponse;
 import com.tc.core.response.UserInfoResponse;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.FileStorageService;
 import com.tc.tcapi.service.PostCommentService;
 import com.tc.tcapi.service.PostService;

@@ -18,9 +18,9 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="core" options="--add-modules java.base" />
-      <module name="eureka-server" options="--add-modules java.base" />
-      <module name="tcapi" options="--add-modules java.base" />
+      <module name="core" options="" />
+      <module name="eureka-server" options="" />
+      <module name="tcapi" options="" />
     </option>
   </component>
 </project>

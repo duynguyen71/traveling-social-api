@@ -1,6 +1,6 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.Reaction;
+import com.tc.tcapi.model.Reaction;
 import com.tc.tcapi.repository.ReactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

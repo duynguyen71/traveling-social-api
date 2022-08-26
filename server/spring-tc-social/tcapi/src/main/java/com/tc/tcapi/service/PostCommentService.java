@@ -1,8 +1,8 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.Post;
-import com.tc.core.model.PostComment;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.Post;
+import com.tc.tcapi.model.PostComment;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.PostCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

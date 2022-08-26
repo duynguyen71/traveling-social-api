@@ -4,6 +4,7 @@ import com.tc.tcapi.jwt.AuthorizationFilter;
 import com.tc.tcapi.jwt.JwtAuthFilter;
 import com.tc.tcapi.service.JwtService;
 import com.tc.tcapi.service.MyUserDetailService;
+import com.tc.tcapi.utilities.DeviceMetadataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final MyUserDetailService userDetailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final DeviceMetadataUtil deviceMetadataUtil;
 
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
@@ -39,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(authenticationManagerBean(), jwtService);
+        JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(authenticationManagerBean(), deviceMetadataUtil, jwtService);
         jwtAuthFilter.setFilterProcessesUrl("/api/v1/auth/login");
 
         http.cors();

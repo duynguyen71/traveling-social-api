@@ -1,14 +1,15 @@
 package com.tc.tcapi.jwt;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.maxmind.geoip2.model.CityResponse;
 import com.tc.tcapi.model.MyUserDetail;
 import com.tc.core.request.LoginRequest;
 import com.tc.tcapi.service.JwtService;
+import com.tc.tcapi.utilities.DeviceMetadataUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,17 +25,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final DeviceMetadataUtil deviceMetadataUtil;
     private final JwtService jwtService;
 
     @SneakyThrows
@@ -55,7 +54,6 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
             SecurityContextHolder.getContext().setAuthentication(authenticate);
-
             return authenticate;
         } else {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -72,6 +70,7 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
         new ObjectMapper().writeValue(response.getOutputStream(), map);
     }
 
+    @SneakyThrows
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
@@ -79,12 +78,13 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authResult) throws IOException, ServletException {
         log.info("Success authentication ");
         MyUserDetail principal = (MyUserDetail) authResult.getPrincipal();
-        String accessToken = jwtService.generateToken(principal,15);
-        String refreshToken = jwtService.generateToken(principal,30);
-        Map<String, String> data = Map.of("accessToken", accessToken,"refreshToken",refreshToken);
+        String accessToken = jwtService.generateToken(principal, 15);
+        String refreshToken = jwtService.generateToken(principal, 30);
+        Map<String, String> data = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        //
+        // set device meta
+        deviceMetadataUtil.extractAndSaveDeviceMetadata(request);
         new ObjectMapper().writeValue(response.getOutputStream(), data);
     }
 

@@ -1,11 +1,12 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.ChatGroup;
-import com.tc.core.model.ChatGroupUser;
-import com.tc.core.model.Message;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ChatGroup;
+import com.tc.tcapi.model.ChatGroupUser;
+import com.tc.tcapi.model.Message;
+import com.tc.tcapi.model.User;
 import com.tc.core.request.ChatGroupCreateRequest;
 import com.tc.core.response.*;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.ChatGroupService;
 import com.tc.tcapi.service.ChatGroupUserService;
 import com.tc.tcapi.service.MessageService;
@@ -13,6 +14,7 @@ import com.tc.tcapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +39,9 @@ public class ChatGroupHelper {
 
     //get current user chat groups
     public ResponseEntity<?> getChatGroups(Map<String, String> param) {
-        List<ChatGroup> groups = service.getGroups(userService.getCurrentUser(), 1);
+        BaseParamRequest baseParamRequest = new BaseParamRequest(param);
+        Pageable pageRequest = baseParamRequest.toNativePageRequest("createDate");
+        List<ChatGroup> groups = service.getGroups(userService.getCurrentUser(), 1, pageRequest);
         List<ChatGroupResponse> chatGroupResponses = groups.stream()
                 .map(g -> {
                     ChatGroupResponse chatGroupResponse = modelMapper.map(g, ChatGroupResponse.class);
@@ -56,7 +60,9 @@ public class ChatGroupHelper {
                     return chatGroupResponse;
                 })
                 .collect(Collectors.toList());
-        return BaseResponse.success(chatGroupResponses, "get chat groups success!");
+        String message = "get chat groups success!" + "length: " + groups.size();
+        log.info("{}", message);
+        return BaseResponse.success(chatGroupResponses, message);
     }
 
     public ResponseEntity<?> createChatGroup(ChatGroupCreateRequest request) {
@@ -64,6 +70,7 @@ public class ChatGroupHelper {
         if (memberIds == null || memberIds.isEmpty()) {
             return BaseResponse.badRequest("create group failed: member users is empty");
         }
+//        TODO: loi tu tao chat grop voi chinh  minh
         User currentUser = userService.getCurrentUser();
         ChatGroup chatGroup = null;
         //check exist group between two users

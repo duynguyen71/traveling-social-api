@@ -1,7 +1,7 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.ReviewPost;
-import com.tc.core.model.ReviewPostImage;
+import com.tc.tcapi.model.ReviewPost;
+import com.tc.tcapi.model.ReviewPostImage;
 import com.tc.tcapi.repository.ReviewPostImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.DeviceMetadata;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.DeviceMetadata;
+import com.tc.tcapi.model.User;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.UserDeviceMetadataResponse;
 import com.tc.tcapi.service.DeviceMetadataService;

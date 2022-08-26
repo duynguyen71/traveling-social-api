@@ -2,8 +2,8 @@ package com.tc.tcapi.service;
 
 import com.tc.core.exception.FileNotFoundException;
 import com.tc.core.exception.FileUploadException;
-import com.tc.core.model.FileUpload;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.FileUpload;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.FileUploadRepository;
 import com.tc.core.response.FileUploadResponse;
 import com.tc.core.utilities.ValidationUtil;

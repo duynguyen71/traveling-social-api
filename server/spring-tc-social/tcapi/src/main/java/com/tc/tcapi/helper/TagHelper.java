@@ -1,9 +1,9 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.request.BaseParamRequest;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.BaseTagReponse;
 import com.tc.core.utilities.ValidationUtil;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

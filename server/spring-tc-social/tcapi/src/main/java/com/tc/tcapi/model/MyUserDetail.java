@@ -1,8 +1,6 @@
 package com.tc.tcapi.model;
 
 
-import com.tc.core.model.Role;
-import com.tc.core.model.User;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

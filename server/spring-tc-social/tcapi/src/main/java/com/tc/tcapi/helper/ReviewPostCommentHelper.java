@@ -1,11 +1,11 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.*;
-import com.tc.core.request.BaseParamRequest;
+import com.tc.tcapi.model.*;
 import com.tc.core.request.PostCommentRequest;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.CommentResponse;
 import com.tc.core.response.UserInfoResponse;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

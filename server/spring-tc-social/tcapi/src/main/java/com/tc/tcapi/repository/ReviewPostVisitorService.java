@@ -1,8 +1,8 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.ReviewPost;
-import com.tc.core.model.ReviewPostVisitor;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ReviewPost;
+import com.tc.tcapi.model.ReviewPostVisitor;
+import com.tc.tcapi.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

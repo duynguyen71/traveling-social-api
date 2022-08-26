@@ -1,7 +1,7 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.Post;
-import com.tc.core.model.PostContent;
+import com.tc.tcapi.model.Post;
+import com.tc.tcapi.model.PostContent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,8 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.ReviewPost;
-import com.tc.core.model.ReviewPostReaction;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ReviewPost;
+import com.tc.tcapi.model.ReviewPostReaction;
+import com.tc.tcapi.model.User;
 import com.tc.core.request.ReactionRequest;
 import com.tc.tcapi.repository.ReviewPostReactionRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.NotificationActor;
+import com.tc.tcapi.model.NotificationActor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

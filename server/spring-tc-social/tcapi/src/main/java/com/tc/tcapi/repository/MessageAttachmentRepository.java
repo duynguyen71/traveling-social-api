@@ -1,6 +1,6 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.MessageAttachment;
+import com.tc.tcapi.model.MessageAttachment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.Tag;
+import com.tc.tcapi.model.Tag;
 import com.tc.tcapi.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

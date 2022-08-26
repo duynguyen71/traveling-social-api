@@ -1,7 +1,7 @@
 package com.tc.tcapi.service;
 
 import com.tc.core.enumm.ERole;
-import com.tc.core.model.Role;
+import com.tc.tcapi.model.Role;
 import com.tc.tcapi.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

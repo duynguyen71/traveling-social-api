@@ -1,6 +1,6 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.ChatGroupUser;
+import com.tc.tcapi.model.ChatGroupUser;
 import com.tc.tcapi.service.ChatGroupUserService;
 import com.tc.tcapi.service.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,9 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.*;
+import com.tc.tcapi.model.*;
 import com.tc.core.request.*;
 import com.tc.core.response.*;
-import com.tc.tcapi.utilities.ObjectMapperUtils;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

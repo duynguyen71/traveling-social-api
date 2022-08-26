@@ -1,8 +1,9 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.ChatGroup;
-import com.tc.core.model.ChatGroupUser;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ChatGroup;
+import com.tc.tcapi.model.ChatGroupUser;
+import com.tc.tcapi.model.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +19,7 @@ public interface ChatGroupRepository extends JpaRepository<ChatGroup, Long> {
 
     List<ChatGroup> findByUsersAndStatus(ChatGroupUser user, Integer status);
 
-    List<ChatGroup> findByUsers_UserAndStatus(User user, Integer status);
+    List<ChatGroup> findByUsers_UserAndStatus(User user, Integer status, Pageable pageable);
 
     Optional<ChatGroup> findByIdAndUsers_UserAndStatus(Long id, User user, Integer i);
 

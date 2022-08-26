@@ -1,17 +1,18 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.DeviceMetadata;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.DeviceMetadata;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface DeviceMetadataRepository extends JpaRepository<DeviceMetadata, Long> {
 
-    List<DeviceMetadata> findAllByUser_Id(Long userId);
+    @Query(nativeQuery = true, value = "select d.* from user u join device_metadata d\n" +
+            "on u.id = d.user_id where u.id = :id")
+    List<DeviceMetadata> findDeviceListNative(@Param("id") Long userId);
 
-    Optional<DeviceMetadata> findByUser_IdAndDeviceDetailAndLocation(Long userId,String detail,String location);
 }

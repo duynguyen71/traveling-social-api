@@ -1,7 +1,7 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.Notification;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.Notification;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

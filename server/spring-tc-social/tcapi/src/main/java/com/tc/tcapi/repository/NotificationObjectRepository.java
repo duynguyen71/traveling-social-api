@@ -1,7 +1,7 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.NotificationObject;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.NotificationObject;
+import com.tc.tcapi.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

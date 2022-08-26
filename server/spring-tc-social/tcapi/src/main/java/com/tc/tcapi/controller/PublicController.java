@@ -1,6 +1,7 @@
 package com.tc.tcapi.controller;
 
 import com.tc.tcapi.helper.ReviewPostHelper;
+import com.tc.tcapi.service.DeviceMetadataService;
 import com.tc.tcapi.utilities.Constance;
 import com.tc.tcapi.helper.UserHelper;
 import com.tc.core.request.RegistrationRequest;
@@ -12,7 +13,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,11 +26,19 @@ public class PublicController {
 
     private final UserHelper userHelper;
     private final ReviewPostHelper reviewPostHelper;
+     private final DeviceMetadataService deviceListService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
         return null;
     }
+
+//    @GetMapping("/device-lists/{id}")
+//    public ResponseEntity<?> getDeviceLIst(@PathVariable Long id) {
+//        List<String> rs = deviceListService.getDeviceList(id).stream()
+//                .map(deviceMetadata -> deviceMetadata.getToken() + "\n" + deviceMetadata.getDeviceName()).collect(Collectors.toList());
+//        return ResponseEntity.ok(rs);
+//    }
 
     @GetMapping("validation-input")
     public ResponseEntity<?> validationInput(@RequestParam("input") String input,

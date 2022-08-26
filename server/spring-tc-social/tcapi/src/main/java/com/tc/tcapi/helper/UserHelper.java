@@ -3,12 +3,13 @@ package com.tc.tcapi.helper;
 
 import com.tc.core.exception.FileNotFoundException;
 import com.tc.core.exception.FileUploadException;
-import com.tc.core.model.FileUpload;
-import com.tc.core.model.Follow;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.FileUpload;
+import com.tc.tcapi.model.Follow;
+import com.tc.tcapi.model.User;
 import com.tc.core.request.*;
 import com.tc.core.response.*;
 import com.tc.core.utilities.ValidationUtil;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

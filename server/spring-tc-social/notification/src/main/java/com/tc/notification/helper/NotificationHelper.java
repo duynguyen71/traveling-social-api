@@ -1,6 +1,6 @@
 package com.tc.notification.helper;
 
-import com.tc.notification.request.NotificationRequest;
+import com.tc.core.request.NotificationRequest;
 import com.tc.notification.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

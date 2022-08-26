@@ -1,8 +1,8 @@
 package com.tc.tcapi.repository;
 
-import com.tc.core.model.ReviewPost;
-import com.tc.core.model.Tag;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.ReviewPost;
+import com.tc.tcapi.model.Tag;
+import com.tc.tcapi.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

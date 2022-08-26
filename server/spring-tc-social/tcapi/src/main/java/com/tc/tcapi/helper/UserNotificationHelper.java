@@ -1,14 +1,12 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.Notification;
-import com.tc.core.model.NotificationObject;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.Notification;
+import com.tc.tcapi.model.NotificationObject;
+import com.tc.tcapi.model.User;
 import com.tc.core.request.NotificationRequest;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.NotificationResp;
-import com.tc.core.response.NotificationResponse;
 import com.tc.tcapi.service.NotificationObjectService;
-import com.tc.tcapi.service.PostService;
 import com.tc.tcapi.service.UserNotificationService;
 import com.tc.tcapi.service.UserService;
 import lombok.RequiredArgsConstructor;

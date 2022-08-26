@@ -1,8 +1,7 @@
 package com.tc.tcapi.service;
 
 import com.tc.tcapi.model.MyUserDetail;
-import com.tc.core.model.User;
-import com.tc.tcapi.model.MyUserDetail;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,10 +1,11 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.model.*;
+import com.tc.tcapi.model.*;
 import com.tc.core.request.*;
 import com.tc.core.response.*;
 import com.tc.core.utilities.ValidationUtil;
 import com.tc.tcapi.repository.ReviewPostVisitorService;
+import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -203,7 +204,7 @@ public class ReviewPostHelper {
 
 
     public ResponseEntity<?> getBookmarkReviewPosts(Map<String, String> param) {
-        Pageable pageable = new BaseParamRequest(param).toNativePageRequest();
+        Pageable pageable = new BaseParamRequest(param).toNativePageRequest("create_date");
         User user = userService.getCurrentUser();
         List<ReviewPost> bookmarks = reviewPostService.getBookmarks(user, 1, pageable);
         List<BaseReviewPostResponse> data = bookmarks.stream()

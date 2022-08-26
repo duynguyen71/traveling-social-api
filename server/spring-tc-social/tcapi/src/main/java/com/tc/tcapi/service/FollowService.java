@@ -1,7 +1,7 @@
 package com.tc.tcapi.service;
 
-import com.tc.core.model.Follow;
-import com.tc.core.model.User;
+import com.tc.tcapi.model.Follow;
+import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.tc.tcapi.service;
 
 import com.tc.core.enumm.EPostType;
-import com.tc.core.model.*;
+import com.tc.tcapi.model.*;
 import com.tc.tcapi.repository.PostCommentRepository;
 import com.tc.tcapi.repository.PostContentRepository;
 import com.tc.tcapi.repository.PostRepository;
