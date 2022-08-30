@@ -153,7 +153,6 @@ public class ReviewPostHelper {
             if (tag == null) {
                 tag = tagService.saveFlush(Tag.builder().name(tagReqName).build());
             }
-//            tag.getReviewPosts().add(reviewPost);
             if (tagReq.getStatus() == 0) {
                 reviewPost.getTags().remove(tag);
             } else {
@@ -204,9 +203,10 @@ public class ReviewPostHelper {
 
 
     public ResponseEntity<?> getBookmarkReviewPosts(Map<String, String> param) {
-        Pageable pageable = new BaseParamRequest(param).toNativePageRequest("create_date");
+        Pageable pageable = new BaseParamRequest(param).toNativePageRequest("createDate");
         User user = userService.getCurrentUser();
         List<ReviewPost> bookmarks = reviewPostService.getBookmarks(user, 1, pageable);
+        log.info("book mark length: {}",bookmarks.size());
         List<BaseReviewPostResponse> data = bookmarks.stream()
                 .map(reviewPost -> modelMapper.map(reviewPost, BaseReviewPostResponse.class))
                 .toList();
@@ -220,7 +220,6 @@ public class ReviewPostHelper {
             visit = new ReviewPostVisitor();
             visit.setUser(userService.getCurrentUser());
             visit.setReviewPost(reviewPostService.getById(id));
-            visit.setStatus(1);
         }
         visit.setStatus(1);
         postVisitorService.save(visit);

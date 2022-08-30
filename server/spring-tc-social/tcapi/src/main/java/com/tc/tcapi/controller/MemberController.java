@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ public class MemberController {
     private final ReviewPostCommentHelper reviewPostCommentHelper;
     private final TagHelper tagHelper;
     private final ReviewPostReactionHelper reviewPostReactionHelper;
+    private final ChatGroupUserHelper chatGroupUserHelper;
+    private final DeviceMetadataHelper deviceMetadataHelper;
 
     @PutMapping("/users/me/using-app/{status}")
     public ResponseEntity<?> setUsingApp(@PathVariable Integer status) {
@@ -107,6 +110,21 @@ public class MemberController {
         return postHelper.getCurrentUserPosts(params);
     }
 
+    @GetMapping("/users/me/questions")
+    public ResponseEntity<?> getCurrentUserQuestionPosts(@RequestParam Map<String, String> params) {
+        return postHelper.getCurrentUserQuestions(params);
+    }
+
+    @PutMapping("/users/me/questions/{id}/close/{status}")
+    public ResponseEntity<?> closeQuestion(@PathVariable("id") Long questionPostId, @PathVariable("status") int status) {
+        return postHelper.closeQuestionPost(questionPostId, status);
+    }
+
+    @GetMapping("/posts/search")
+    public ResponseEntity<?> searchPosts(@RequestParam Map<String, String> params) {
+        return postHelper.searchPosts(params);
+    }
+
     @PutMapping("/posts/{postId}/status/{status}")
     public ResponseEntity<?> updatePostStatus(@PathVariable("postId") Long postId, @PathVariable("status") Integer status) {
         return postHelper.updateStatus(postId, status);
@@ -115,6 +133,16 @@ public class MemberController {
     @GetMapping(value = "/posts")
     public ResponseEntity<?> getPosts(@RequestParam Map<String, String> params) {
         return postHelper.getPosts(params);
+    }
+
+    @GetMapping(value = "/questions/{id}/detail")
+    public ResponseEntity<?> getPosts(@PathVariable("id") Long postId) {
+        return postHelper.getQuestionPostDetail(postId);
+    }
+
+    @GetMapping(value = "/questions")
+    public ResponseEntity<?> getQuestions(Map<String, String> param) {
+        return postHelper.getQuestions(param);
     }
 
     @GetMapping("/users/me/posts/{postId}/comments")
@@ -281,11 +309,34 @@ public class MemberController {
     }
 
     /**
+     * Create chat group
+     */
+    @PostMapping("/users/me/chat-groups/member-names")
+    public ResponseEntity<?> createChatGroupWithName(@RequestBody @Valid ChatGroupCreateRequest request) {
+        return chatGroupHelper.createChatGroupWithNames(request);
+    }
+
+    /**
      * get chat group detail
      */
     @GetMapping("/users/me/chat-groups/{groupId}")
     public ResponseEntity<?> getChatGroupDetail(@PathVariable("groupId") Long groupId) {
         return chatGroupHelper.getChatGroupDetail(groupId);
+    }
+
+    @PutMapping("/users/me/chat-groups/{groupId}")
+    public ResponseEntity<?> updateGroup(@PathVariable("groupId") Long groupId, @RequestBody UpdateGroupInfoRequest request) {
+        return chatGroupHelper.updateGroupInfo(groupId, request);
+    }
+
+    @PostMapping("/users/me/chat-groups/{groupId}/members")
+    public ResponseEntity<?> addMembers(@PathVariable Long groupId, @RequestBody AddMemberRequest request) {
+        return chatGroupUserHelper.addMember(groupId, request);
+    }
+
+    @PutMapping("/users/me/chat-groups/{groupId}/leave")
+    public ResponseEntity<?> leaveGroup(@PathVariable("groupId") Long groupId) {
+        return chatGroupUserHelper.leaveGroup(groupId);
     }
 
     /**
@@ -373,7 +424,17 @@ public class MemberController {
     @PutMapping("/review-posts/bookmarks/{id}")
     public ResponseEntity<?> removeBookmarks(@PathVariable("id") Long id) {
         return reviewPostHelper.removeBookmark(id);
-
     }
+
+    @PostMapping("/users/me/devices/token")
+    public ResponseEntity<?> updateDeviceInfo(HttpServletRequest request) {
+        return deviceMetadataHelper.updateDeviceInfo(request);
+    }
+
+    @GetMapping("/users/me/forget-password")
+    public ResponseEntity<?> forgetPassword() {
+        return userHelper.forgetPassword();
+    }
+
 
 }

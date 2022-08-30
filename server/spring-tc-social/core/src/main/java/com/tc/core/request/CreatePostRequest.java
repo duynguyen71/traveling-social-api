@@ -7,8 +7,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,5 +29,7 @@ public class CreatePostRequest implements Serializable {
     private EPostType type;
 
     private List<ContentUploadRequest> contents = new LinkedList<>();
+
+    private Set<TagRequest> tags =new LinkedHashSet<>();
 
 }

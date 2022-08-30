@@ -7,6 +7,7 @@ import com.tc.core.response.CommentResponse;
 import com.tc.core.response.UserInfoResponse;
 import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
+import com.tc.tcapi.utilities.NotificationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,6 +30,7 @@ public class ReviewPostCommentHelper {
     private final ModelMapper modelMapper;
     private final FileStorageService fileStorageService;
     private final ReviewPostService postService;
+    private final NotificationUtil notificationUtil;
 
     public ResponseEntity<?> getRootComments(Long postId, Map<String, String> params) {
         log.info("get review post comments");
@@ -83,6 +85,7 @@ public class ReviewPostCommentHelper {
             postComment = reviewPostCommentService.save(postComment);
             CommentResponse commentResponse = modelMapper.map(postComment, CommentResponse.class);
             commentResponse.setUser(modelMapper.map(postComment.getUser(), UserInfoResponse.class));
+            notificationUtil.sendCommentNotification(commentResponse.getContent(), post.getUser());
             return BaseResponse.success(commentResponse, "Post comment success");
 
 

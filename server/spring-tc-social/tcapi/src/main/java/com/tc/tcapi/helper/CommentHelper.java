@@ -13,6 +13,7 @@ import com.tc.tcapi.service.FileStorageService;
 import com.tc.tcapi.service.PostCommentService;
 import com.tc.tcapi.service.PostService;
 import com.tc.tcapi.service.UserService;
+import com.tc.tcapi.utilities.NotificationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class CommentHelper {
     private final PostCommentService commentService;
     private final ModelMapper modelMapper;
     private final FileStorageService fileStorageService;
+    private final NotificationUtil notificationUtil;
 
     public ResponseEntity<?> getRootComments(Long postId, Map<String, String> params) {
         BaseParamRequest paramRequest = new BaseParamRequest(params);
@@ -83,9 +85,8 @@ public class CommentHelper {
             postComment = commentService.save(postComment);
             CommentResponse commentResponse = modelMapper.map(postComment, CommentResponse.class);
             commentResponse.setUser(modelMapper.map(postComment.getUser(), UserInfoResponse.class));
+            notificationUtil.sendCommentNotification(commentResponse.getContent(), post.getUser());
             return BaseResponse.success(commentResponse, "Post comment success");
-
-
         }
         return BaseResponse.badRequest("Can not find post with id: " + id);
     }
@@ -93,11 +94,14 @@ public class CommentHelper {
     public ResponseEntity<?> getReplyComments(Long commentId, Map<String, String> params) {
         PostComment parent = commentService.getByIdAndStatus(commentId, 1);
         List<PostComment> comments = commentService.getReplyComments(parent);
+        UserInfoResponse replyUser = modelMapper.map(parent.getUser(), UserInfoResponse.class);
+
         List<CommentResponse> rs = comments.stream()
                 .map(comment -> {
                     CommentResponse commentResp = modelMapper.map(comment, CommentResponse.class);
                     commentResp.setReplyCount(commentService.countReply(comment));
                     commentResp.setUser(modelMapper.map(comment.getUser(), UserInfoResponse.class));
+                    commentResp.setReplyUser(replyUser);
                     return commentResp;
                 }).collect(Collectors.toList());
         return BaseResponse.success(rs, "get reply comments success");

@@ -1,13 +1,20 @@
 package com.tc.core.response;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Data
-public class PostResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class QuestionPostResponse implements Serializable {
 
     private Long id;
 
@@ -19,22 +26,16 @@ public class PostResponse {
 
     private UserInfoResponse user;
 
-    private List<PostContentResponse> contents = new ArrayList<>();
-
     private Long reactionCount;
 
     private Date createDate;
-
-    private Date updateDate;
 
     private Integer likeCount;
 
     private Integer commentCount;
 
-    private ReactionResponse myReaction;
+    private boolean isClose;
 
-    private List<CommentResponse> myComments;
-
-    private boolean isClose = false;
+    private List<TagResponse> tags = new ArrayList<>();
 
 }

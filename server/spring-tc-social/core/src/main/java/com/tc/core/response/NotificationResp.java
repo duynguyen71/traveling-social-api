@@ -1,9 +1,6 @@
 package com.tc.core.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class NotificationResp implements Serializable {
 
     //notification object id
@@ -26,5 +24,7 @@ public class NotificationResp implements Serializable {
     private String message;
 
     private Date createDate;
+
+    private BaseUserResponse user;
 
 }
