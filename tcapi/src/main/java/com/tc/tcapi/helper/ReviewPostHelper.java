@@ -50,7 +50,6 @@ public class ReviewPostHelper {
                     BaseReviewPostResponse map = modelMapper.map(r, BaseReviewPostResponse.class);
                     Location location = r.getLocation();
                     if (location != null) {
-
                         map.setLocation(location.getLabel());
                     }
                     return map;
