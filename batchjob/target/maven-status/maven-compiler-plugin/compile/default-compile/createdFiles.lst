@@ -1,0 +1,3 @@
+com\tc\batchjob\feign\AuthFeignClient.class
+com\tc\BatchJobApplication.class
+com\tc\batchjob\controller\BatchjobBaseController.class
