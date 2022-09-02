@@ -19,6 +19,5 @@ public interface ChatGroupUserRepository extends JpaRepository<ChatGroupUser,Lon
 
      Optional<ChatGroupUser> findByIdAndChatGroup_Users_User_Id(Long chatGroupUserId, Long userId);
 
-     Optional<ChatGroupUser> findByUserAndChatGroup_Id(User user, Long chatGroupId);
 
 }

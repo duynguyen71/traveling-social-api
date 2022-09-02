@@ -28,9 +28,6 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private List<ReviewPost> reviewPosts = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "tags")
-    private List<Post> posts = new ArrayList<>();
-
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createDate;

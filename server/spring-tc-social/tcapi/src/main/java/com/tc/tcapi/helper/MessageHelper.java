@@ -95,14 +95,9 @@ public class MessageHelper {
             log.info("Get device list chatGroupUser: {} list size: {}", user.getUsername(), deviceList.size());
             for (int i = 0; i < deviceList.size(); i++) {
                 // set target push notification token
-                DeviceMetadata deviceMetadata = deviceList.get(i);
-                if (deviceMetadata != null && deviceMetadata.getToken() != null) {
-                    notificationRequest.setTarget(deviceMetadata.getToken());
-//                TODO: fix notification error
-                    log.info("SEND NOTIFICATION TO USER {} taget \n{}\n", user.getUsername(), deviceMetadata.getToken());
-                    notificationFeign.sendNewMessageNotification(notificationRequest);
-                }
-
+                notificationRequest.setTarget(deviceList.get(i).getToken());
+                log.info("SEND NOTIFICATION TO USER {} taget \n{}\n", user.getUsername(), deviceList.get(i).getToken());
+                notificationFeign.sendNewMessageNotification(notificationRequest);
             }
         }
         // return message

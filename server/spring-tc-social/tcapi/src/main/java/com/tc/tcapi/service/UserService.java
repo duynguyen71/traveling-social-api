@@ -43,7 +43,7 @@ public class UserService {
     public User getCurrentUser() {
         MyUserDetail myUserDetail = (MyUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Objects.nonNull(myUserDetail);
-        if (myUserDetail != null) {
+        if(myUserDetail!=null){
             return getById(myUserDetail.getId());
         }
         return null;
@@ -51,10 +51,6 @@ public class UserService {
 
     public boolean existByUsername(String username) {
         return userRepo.existsByUsername(username);
-    }
-
-    public User getByUsername(String username) {
-        return userRepo.findByUsername(username).orElse(null);
     }
 
     public boolean existByEmail(String email) {
@@ -89,7 +85,7 @@ public class UserService {
         return userRepo.findAllByRole(role);
     }
 
-    public User getReviewPostAuth(Long reviewPostId) {
+    public User getReviewPostAuth(Long reviewPostId){
         return userRepo.findByReviewPosts_Id(reviewPostId).orElse(null);
     }
 

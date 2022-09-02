@@ -1,14 +1,14 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.response.BaseUserResponse;
 import com.tc.tcapi.model.Notification;
-import com.tc.tcapi.model.NotificationActor;
 import com.tc.tcapi.model.NotificationObject;
 import com.tc.tcapi.model.User;
 import com.tc.core.request.NotificationRequest;
 import com.tc.core.response.BaseResponse;
 import com.tc.core.response.NotificationResp;
-import com.tc.tcapi.service.*;
+import com.tc.tcapi.service.NotificationObjectService;
+import com.tc.tcapi.service.UserNotificationService;
+import com.tc.tcapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,27 +28,32 @@ public class UserNotificationHelper {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final NotificationObjectService notificationObjectService;
-    private final NotificationActorService notificationActorService;
 
     /**
      * Get current user notifications
      */
     public ResponseEntity<?> getCurrentUserNotifications() {
         User user = userService.getCurrentUser();
-        List<Notification> notifications = service.getUserNotifications(user);
-        List<NotificationResp> data = notifications.stream()
-                .map(notification -> {
-                    NotificationResp map = modelMapper.map(notification, NotificationResp.class);
-                    NotificationObject notificationObject = notification.getNotificationObject();
-                    String message = notificationObject.getMessage();
-                    map.setMessage(message);
-                    NotificationActor notificationActor = notificationActorService.getByNotificationObject(notificationObject);
-                    if (notificationActor != null) {
-                        map.setUser(modelMapper.map(notificationActor.getActor(), BaseUserResponse.class));
-                    }
-                    log.info("{}", map);
-                    return map;
-                }).collect(Collectors.toList());
+        List<NotificationObject> notificationObjects = notificationObjectService.getNotificationObjects(user);
+        List<NotificationResp> data = notificationObjects.stream()
+                .map(n -> modelMapper.map(n, NotificationResp.class))
+                .collect(Collectors.toList());
+
+
+        //group by notification_entity type
+        Map<Long, List<NotificationObject>> groupByEntityType =
+                notificationObjects.stream()
+                        .collect(Collectors.groupingBy((notificationObject) -> notificationObject.getEntityTypeId()));
+//        groupByEntityType.get()
+        for (Long key :
+                groupByEntityType.keySet()) {
+            //fetch post
+//            if (key >= 0 || key <= 3) {
+//                postService.getById()
+//            }
+            List<NotificationObject> objects = groupByEntityType.get(key);
+        }
+        log.info("group by entity type - {}", groupByEntityType);
         return BaseResponse.success(data, "Get notifications success!");
     }
 

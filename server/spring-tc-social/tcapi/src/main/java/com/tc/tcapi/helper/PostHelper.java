@@ -1,7 +1,5 @@
 package com.tc.tcapi.helper;
 
-import com.tc.core.enumm.EPostType;
-import com.tc.core.utilities.ValidationUtil;
 import com.tc.tcapi.model.*;
 import com.tc.core.request.*;
 import com.tc.core.response.*;
@@ -9,7 +7,6 @@ import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +17,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component("PostHelper")
@@ -36,7 +32,6 @@ public class PostHelper {
     private final PostCommentService postCommentService;
     private final ReviewPostService reviewPostService;
     private final FileService fileService;
-    private final TagService tagService;
 
     /**
      * Lay ra cac bai post cua user hien tai
@@ -47,8 +42,10 @@ public class PostHelper {
     public ResponseEntity<?> getCurrentUserPosts(Map<String, String> params) {
         User currentUser = userService.getCurrentUser();
         BaseParamRequest baseParamRequest = new BaseParamRequest(params);
+
         Pageable pageable = baseParamRequest.toPageRequest();
-        List<Post> posts = postService.getUserPosts(currentUser, baseParamRequest.getStatus(), 1, pageable);
+
+        List<Post> posts = postService.getUserPosts(currentUser, baseParamRequest.getStatus(), pageable);
         List<PostResponse> rs = posts.stream()
                 .map(post -> {
                     PostResponse postResponse = modelMapper.map(post, PostResponse.class);
@@ -66,15 +63,6 @@ public class PostHelper {
                 }).collect(Collectors.toList());
 
         return BaseResponse.success(rs, "get user id: " + currentUser.getId() + "\'s posts success!");
-    }
-
-    public ResponseEntity<?> getCurrentUserQuestions(Map<String, String> params) {
-        User currentUser = userService.getCurrentUser();
-        BaseParamRequest baseParamRequest = new BaseParamRequest(params);
-        Pageable pageable = baseParamRequest.toPageRequest();
-        List<Post> posts = postService.getUserPosts(currentUser, 1, 2, pageable);
-        List<QuestionPostResponse> questionPostResponses = convertToQuestionPostsResponse(posts);
-        return BaseResponse.success(questionPostResponses, "Get current user question posts success!");
     }
 
     public ResponseEntity<?> createPost(CreatePostRequest createPostRequest) {
@@ -97,20 +85,7 @@ public class PostHelper {
         post.setType(createPostRequest.getType());
 
         post = postService.savePostAndFlush(post);
-        // save tags
-        Set<TagRequest> tags = createPostRequest.getTags();
-        log.info("tag request {}", tags);
-        for (TagRequest tagRequest :
-                tags) {
-            Tag tag;
-            String tagReqName = tagRequest.getName();
-            tag = tagService.getByName(tagReqName);
-            if (tag == null) {
-                tag = tagService.saveFlush(Tag.builder().name(tagReqName).build());
-            }
-            post.getTags().add(tag);
-            postService.save(post);
-        }
+
         for (int i = 0; i < contents.size(); i++) {
             ContentUploadRequest contentRequest = contents.get(i);
             Long postContentId = contentRequest.getId();
@@ -143,6 +118,7 @@ public class PostHelper {
                 postService.savePostContent(postContent);
             }
         }
+        log.info("create post success");
         //map to post response
         PostResponse postResponse = modelMapper.map(post, PostResponse.class);
         postResponse.setUser(modelMapper.map(currentUser, UserInfoResponse.class));
@@ -181,9 +157,6 @@ public class PostHelper {
         BaseParamRequest baseParamRequest = new BaseParamRequest(params);
         Pageable pageable = baseParamRequest.toPageRequest();
         List<Post> posts = postService.getUserStories(currentUser, pageable);
-        if (posts.isEmpty() && baseParamRequest.getPage() == 0) {
-            posts = postService.findPosts(1, EPostType.STORY);
-        }
         List<Post> copy = new ArrayList<>(posts);
         List<Post> randomPosts = new ArrayList<>();
         SecureRandom secureRandom = new SecureRandom();
@@ -213,9 +186,6 @@ public class PostHelper {
         BaseParamRequest baseParamRequest = new BaseParamRequest(params);
         Pageable pageable = baseParamRequest.toPageRequest();
         List<Post> posts = postService.getPosts(currentUser, pageable);
-        if (posts.isEmpty() && baseParamRequest.getPage() == 0) {
-            posts = postService.findPosts(1, EPostType.PERSONAL_POST);
-        }
         List<Post> copy = new ArrayList<>(posts);
         List<Post> randomPosts = new ArrayList<>();
         SecureRandom secureRandom = new SecureRandom();
@@ -285,7 +255,6 @@ public class PostHelper {
         BaseParamRequest baseParamRequest = new BaseParamRequest(param);
         Pageable pageRequest = baseParamRequest.toPageRequest();
         List<Post> posts = postService.getUserPosts(userId, 1, pageRequest);
-
         List<PostResponse> data = posts.stream()
                 .map(post -> {
                     PostResponse postResponse = modelMapper.map(post, PostResponse.class);
@@ -334,62 +303,4 @@ public class PostHelper {
     }
 
 
-    //search posts
-    public ResponseEntity<?> searchPosts(Map<String, String> params) {
-        BaseParamRequest paramRequest = new BaseParamRequest(params);
-        String keyWord = null;
-        if (!ValidationUtil.isNullOrBlank(params.get("keyWord"))) {
-            keyWord = params.get("keyWord");
-        }
-        List<Post> posts = postService.searchPosts("%" + keyWord + "%", "%" + keyWord + "%", 2, paramRequest.toPageRequest());
-        List<QuestionPostResponse> data = convertToQuestionPostsResponse(posts);
-        return BaseResponse.success(data, "Search posts with keyword: " + keyWord + " success!");
-    }
-
-    private List<QuestionPostResponse> convertToQuestionPostsResponse(List<Post> posts) {
-        List<QuestionPostResponse> data = posts.stream().map(
-                post -> {
-                    QuestionPostResponse response = mapToQuestionPostResponse(post);
-                    int i = postCommentService.countAllComments(post);
-                    response.setCommentCount(i);
-                    return response;
-                }
-        ).collect(Collectors.toList());
-        return data;
-    }
-
-    @NotNull
-    private QuestionPostResponse mapToQuestionPostResponse(Post post) {
-        QuestionPostResponse response = modelMapper.map(post, QuestionPostResponse.class);
-        response.setReactionCount(postReactionService.countReactions(post));
-        response.setCommentCount(postCommentService.countAllComments(post));
-        log.info("Post close {}", post.isClose());
-        response.setClose(post.isClose());
-        return response;
-    }
-
-    public ResponseEntity<?> getQuestionPostDetail(Long postId) {
-        // get active post
-        Post post = postService.getByIdAndStatus(postId, 1);
-        if (post == null) return BaseResponse.badRequest("Can not find post with id: " + postId);
-        QuestionPostResponse postResponse = mapToQuestionPostResponse(post);
-        return BaseResponse.success(postResponse, "Get question detail id:" + postId + " success");
-    }
-
-    public ResponseEntity<?> closeQuestionPost(Long questionPostId, int status) {
-        Post post = postService.getCurrentUserPost(questionPostId, userService.getCurrentUser());
-        if (post == null) return BaseResponse.badRequest("Can not find question post with id: " + questionPostId);
-        post.setClose(status == 1);
-        postService.save(post);
-        return BaseResponse.success("Close comment on question post id: " + questionPostId + " success");
-    }
-
-    public ResponseEntity<?> getQuestions(Map<String, String> param) {
-        BaseParamRequest baseParamRequest = new BaseParamRequest(param);
-        Pageable pageable = baseParamRequest.toNativePageRequest("createDate");
-        List<Post> posts = postService.findAllPosts(EPostType.QUESTION, 1, pageable);
-        List<QuestionPostResponse> data = posts.stream()
-                .map(post -> mapToQuestionPostResponse(post)).collect(Collectors.toList());
-        return BaseResponse.success(data,null);
-    }
 }

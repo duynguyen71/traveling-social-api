@@ -22,13 +22,13 @@ public class NotificationObject implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @JoinColumn(name = "entity_id")
+    @JoinColumn(name = "entity_id")
     private Long entityId;
 
     /**
      * identify the type of notification
      */
-//    @JoinColumn(name = "entity_type_id")
+    @JoinColumn(name = "entity_type_id")
     private Long entityTypeId;
 
     @Column(name = "message")

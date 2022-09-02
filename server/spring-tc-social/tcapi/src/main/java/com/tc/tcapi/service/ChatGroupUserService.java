@@ -21,10 +21,6 @@ public class ChatGroupUserService {
         return repo.saveAndFlush(user);
     }
 
-    public ChatGroupUser findByUserAndChatGroupId(User user,Long chatGroupId){
-        return repo.findByUserAndChatGroup_Id(user,chatGroupId).orElse(null);
-    }
-
     public List<ChatGroupUser> getChatUsers(ChatGroup chatGroup, Integer status) {
         return repo.findByChatGroupAndStatus(chatGroup, status);
     }

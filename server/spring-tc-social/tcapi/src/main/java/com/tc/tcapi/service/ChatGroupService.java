@@ -17,13 +17,13 @@ public class ChatGroupService {
 
     private final ChatGroupRepository repo;
 
-    public ChatGroup getById(Long id) {
+    public ChatGroup getById(Long id){
         return repo.findById(id).orElse(null);
     }
 
     //get user chat groups
     public List<ChatGroup> getGroups(User user, Integer status, Pageable pageable) {
-        List<ChatGroup> groups = repo.findByUsers_UserAndUsers_StatusAndStatus(user, status, status, pageable);
+        List<ChatGroup> groups = repo.findByUsers_UserAndStatus(user, status,pageable);
         return groups;
     }
 

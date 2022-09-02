@@ -10,7 +10,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -18,7 +21,7 @@ import java.util.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Post implements Serializable {
+public class Post  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,20 +56,11 @@ public class Post implements Serializable {
 
     private Integer status;
 
-    @Column(name = "is_close")
-    private boolean isClose;
-
     @OneToMany(mappedBy = "post")
     private List<PostReaction> reactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<PostComment> postComments = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(name = "post_tag",
-            joinColumns = {@JoinColumn(name = "post_id")},
-            inverseJoinColumns = {@JoinColumn(name = "tag_id")})
-    private Set<Tag> tags = new HashSet<>();
 
 
 }

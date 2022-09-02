@@ -15,11 +15,9 @@ public class NotificationObjectService {
     private final NotificationObjectRepository repo;
 
     public List<NotificationObject> getNotificationObjects(User notifier){
-        return repo.findAllByNotifications_NotifierOrderByNotifications_CreateDateDesc(notifier);
-    }
 
-    public NotificationObject saveFlush(NotificationObject notificationObject){
-        return repo.saveAndFlush(notificationObject);
+        return repo.findAllByNotifications_NotifierOrderByNotifications_CreateDateDesc(notifier);
+
     }
 
 }

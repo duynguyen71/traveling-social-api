@@ -9,7 +9,6 @@ import com.tc.tcapi.service.ReactionService;
 import com.tc.tcapi.service.ReviewPostReactionService;
 import com.tc.tcapi.service.ReviewPostService;
 import com.tc.tcapi.service.UserService;
-import com.tc.tcapi.utilities.NotificationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,6 @@ public class ReviewPostReactionHelper {
     private final ReviewPostService reviewPostService;
     private final ReviewPostReactionService reviewPostReactionService;
     private final ReactionService reactionService;
-    private final NotificationUtil notificationUtil;
 
     public ResponseEntity<?> reactionPost(ReactionRequest request) {
         Long reactionId = request.getReactionId();
@@ -46,8 +44,6 @@ public class ReviewPostReactionHelper {
         reviewPostReaction.setStatus(1);
         reviewPostReaction.setUser(user);
         reviewPostReactionService.save(reviewPostReaction);
-        // notification
-        notificationUtil.sendReactionNotification(reviewPost.getTitle(), reviewPost.getUser());
         return BaseResponse.success("Reaction review post " + reviewPostId + " success!");
     }
 

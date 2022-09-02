@@ -35,6 +35,4 @@ public class PostResponse {
 
     private List<CommentResponse> myComments;
 
-    private boolean isClose = false;
-
 }

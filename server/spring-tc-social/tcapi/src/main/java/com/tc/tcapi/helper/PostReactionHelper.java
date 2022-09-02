@@ -11,7 +11,6 @@ import com.tc.tcapi.service.PostReactionService;
 import com.tc.tcapi.service.PostService;
 import com.tc.tcapi.service.ReactionService;
 import com.tc.tcapi.service.UserService;
-import com.tc.tcapi.utilities.NotificationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,6 @@ public class PostReactionHelper {
     private final ReactionService reactionService;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private  final NotificationUtil notificationUtil;
 
     public ResponseEntity<?> savePostReaction(ReactionRequest request) {
         User currentUser = userService.getCurrentUser();
@@ -57,7 +55,7 @@ public class PostReactionHelper {
         postReaction.setPost(post);
         postReaction.setReaction(reaction);
         postReaction.setStatus(1);
-        notificationUtil.sendReactionNotification(post.getCaption(),post.getUser());
+
         postReactionService.save(postReaction);
         return BaseResponse.success(null, "save reaction success");
     }

@@ -22,8 +22,12 @@ public class DeviceMetadataUtil {
 
     public void extractAndSaveDeviceMetadata(HttpServletRequest request) {
 
+//            UserAgent agent = UserAgent.parseUserAgentString("CFNetwork/897.15 Darwin/17.5.0 (iPhone/6s iOS/11.3)");
+//            UserAgent agent = UserAgent.parseUserAgentString("Dalvik/2.1.0 (Linux; U; Android 5.1.1; Android SDK built for x86 Build/LMY48X)");
+//            UserAgent agent = UserAgent.parseUserAgentString(agentHeader);
         Parser uaParser = new Parser();
         Client client = uaParser.parse(request.getHeader(HttpHeaders.USER_AGENT));
+//            Client client = uaParser.parse("CFNetwork/897.15 Darwin/17.5.0 (iPhone/6s iOS/11.3)");
         DeviceMetadata deviceMetadata = new DeviceMetadata();
         // Device name
         String deviceName = client.device.family;

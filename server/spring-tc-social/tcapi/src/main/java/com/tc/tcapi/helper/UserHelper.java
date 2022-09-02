@@ -169,11 +169,10 @@ public class UserHelper {
         userService.save(user);
         String accessToken = jwtService.generateToken(user, 15);
         String refreshToken = jwtService.generateToken(user, 30);
-        Map<String, String> tokens = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
-        log.info("Active account success! {}", tokens);
         return BaseResponse.
-                success(tokens,
+                success(Map.of("accessToken", accessToken, "refreshToken", refreshToken),
                         "Active account success!");
+
     }
 
     public ResponseEntity<?> updateCurrentUserInfo(UserUpdateRequest userUpdateRequest) {
@@ -290,6 +289,7 @@ public class UserHelper {
         return BaseResponse.success(detail, "get current user detail success!");
     }
 
+
     public ResponseEntity<?> getUserProfile(Long userId) {
         User user = userService.getById(userId, 1);
         if (user == null)
@@ -402,17 +402,5 @@ public class UserHelper {
         }
         userService.save(user);
         return BaseResponse.success("Update base user info success!");
-    }
-
-    public ResponseEntity<?> forgetPassword() {
-        User user = userService.getCurrentUser();
-        try {
-            mailService.sendResetPasswordVerificationCode(user.getEmail(), userService.generateUniqueCode());
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok().build();
     }
 }

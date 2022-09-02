@@ -16,8 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
 
-    Optional<User> findByUsername(String username);
-
     boolean existsByEmail(String email);
 
     boolean existsByPhone(String phone);
@@ -55,5 +53,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> getTopActiveUsers();
 
     Optional<User> findByReviewPosts_Id(Long id);
-
 }
