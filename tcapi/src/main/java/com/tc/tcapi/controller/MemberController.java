@@ -3,6 +3,7 @@ package com.tc.tcapi.controller;
 import com.tc.tcapi.helper.*;
 import com.tc.core.request.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final UserHelper userHelper;
@@ -32,6 +34,8 @@ public class MemberController {
     private final ChatGroupUserHelper chatGroupUserHelper;
     private final DeviceMetadataHelper deviceMetadataHelper;
     private final LocationHelper locationHelper;
+    private final TourHelper tourHelper;
+    private final TourMemberHelper tourMemberHelper;
 
     @PutMapping("/users/me/using-app/{status}")
     public ResponseEntity<?> setUsingApp(@PathVariable Integer status) {
@@ -267,6 +271,7 @@ public class MemberController {
 
     /**
      * Get Review Post Detail
+     *
      * @param id
      */
     @GetMapping("/review-posts/{reviewPostId}")
@@ -446,5 +451,84 @@ public class MemberController {
         return userHelper.forgetPassword();
     }
 
+    //TOUR API
+
+    /**
+     * Get current user tour
+     *
+
+     * @return
+     */
+    @GetMapping("/users/me/tours/current")
+    public ResponseEntity<?> getCurrentTour(){
+        return tourHelper.getCurrentTour();
+    }
+
+    @GetMapping("/users/me/tours")
+    public ResponseEntity<?> getCreatedTours(@RequestParam Map<String, String> param) {
+        return tourHelper.getCreatedTours(param);
+    }
+
+    @GetMapping("/users/me/tours/{id}")
+    public ResponseEntity<?> getTourDetail(@PathVariable("id") Long id) {
+        return tourHelper.getTourDetail(id);
+    }
+
+    @GetMapping("/users/me/tours/{id}/users")
+    public ResponseEntity<?> getTourUsers(@PathVariable("id") Long tourId) {
+        return tourMemberHelper.getTourUsers(tourId);
+    }
+
+    @PutMapping("/users/me/tours/users/{tourUserId}/status/{status}")
+    public ResponseEntity<?> approveUser(@PathVariable("tourUserId") Long tourUserId,
+                                         @PathVariable("status") int approveStatus) {
+        return tourMemberHelper.approveUser( tourUserId, approveStatus);
+    }
+
+    /**
+     * Create tour
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/users/me/tours")
+    public ResponseEntity<?> createTour(@RequestBody TourRequest request) {
+        return tourHelper.createTour(request);
+    }
+
+    /**
+     * Close tour
+     *
+     * @param close
+     * @return
+     */
+    @PostMapping("/users/me/tours/{tourId}/close/{close}")
+    public ResponseEntity<?> closeTour(@PathVariable("close") int close, @PathVariable("tourId") long tourId) {
+        return tourHelper.closeTour(tourId, close == 0);
+    }
+
+    /***
+     * Get available Tours
+     * @param param
+     * @return
+     */
+    @GetMapping("/tours")
+    public ResponseEntity<?> getAvailableTours(@RequestParam Map<String, String> param) {
+        return tourHelper.getAvailableTours();
+    }
+
+    /**
+     * Request join a Tour
+     *
+     * @param tourId
+     * @return
+     */
+    @PostMapping("/tours/{tourId}/request-join")
+    public ResponseEntity<?> requestJoinTour(@PathVariable("tourId") Long tourId) {
+        return tourMemberHelper.requestJoinTour(tourId);
+    }
+
+
+    //TOUR
 
 }

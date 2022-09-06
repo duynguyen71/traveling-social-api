@@ -9,6 +9,7 @@ import com.tc.tcapi.feign.NotificationFeign;
 import com.tc.tcapi.request.BaseParamRequest;
 import com.tc.tcapi.service.*;
 import com.tc.core.utilities.ValidationUtil;
+import com.tc.tcapi.utilities.NotificationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,7 @@ public class MessageHelper {
     private final ChatGroupService chatGroupService;
     private final DeviceMetadataService deviceService;
     private final NotificationFeign notificationFeign;
+    private final NotificationUtil notificationUtil;
 
     public ResponseEntity<?> getMessages(Long groupId, Map<String, String> param) {
         User currentUser = userService.getCurrentUser();
@@ -76,7 +78,6 @@ public class MessageHelper {
         }
         //save
         message = messageService.saveFlush(message);
-        log.info("Save message success!");
         // create notification request
         NotificationRequest notificationRequest = new NotificationRequest();
         String currentSenderName = currentUser.getUsername();
@@ -87,24 +88,9 @@ public class MessageHelper {
         // get active chat group user
         Set<ChatGroupUser> chatGroupUsers = chatGroup.getUsers();
         chatGroupUsers.removeIf(chatGroupUser -> chatGroupUser.getUser().getId() == currentUser.getId());
-        for (ChatGroupUser chatGroupUser :
-                chatGroupUsers) {
-            // get active device of chatGroupUser
-            User user = chatGroupUser.getUser();
-            List<DeviceMetadata> deviceList = deviceService.getDeviceList(user.getId());
-            log.info("Get device list chatGroupUser: {} list size: {}", user.getUsername(), deviceList.size());
-            for (int i = 0; i < deviceList.size(); i++) {
-                // set target push notification token
-                DeviceMetadata deviceMetadata = deviceList.get(i);
-                if (deviceMetadata != null && deviceMetadata.getToken() != null) {
-                    notificationRequest.setTarget(deviceMetadata.getToken());
-//                TODO: fix notification error
-                    log.info("SEND NOTIFICATION TO USER {} taget \n{}\n", user.getUsername(), deviceMetadata.getToken());
-                    notificationFeign.sendNewMessageNotification(notificationRequest);
-                }
-
-            }
-        }
+        //
+        List<User> notifiers = chatGroupUsers.stream().map(chatGroupUser1 -> chatGroupUser1.getUser()).collect(Collectors.toList());
+        notificationUtil.sendMessageNotification(messageRequest.getMessage(),notifiers);
         // return message
         MessageResponse messageResponse = modelMapper.map(message, MessageResponse.class);
         return BaseResponse.success(messageResponse, "save message success");

@@ -39,5 +39,7 @@ public class ReviewPostEditDetailResponse implements Serializable {
 
     private Set<TagResponse> tags = new LinkedHashSet<>();
 
+    private LocationResponse location;
+
 
 }

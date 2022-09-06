@@ -14,8 +14,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 
+import java.util.Date;
 import java.util.Map;
 
 
@@ -46,31 +48,35 @@ public class SocketMessageController {
     public MessageResponse messageResponse(SimpMessageHeaderAccessor accessor,
                                            @DestinationVariable("groupId") Long groupId,
                                            @Payload MessageRequest req) {
+        log.info("\nSend message...");
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setMessage(req.getMessage());
-        //
         MyUserPrinciple myUserPrinciple = (MyUserPrinciple) accessor.getUser();
-        //
         BaseUserResponse baseUserResponse = new BaseUserResponse();
         baseUserResponse.setUsername(myUserPrinciple.getName());
         baseUserResponse.setAvt(myUserPrinciple.getAvt());
         messageResponse.setUser(baseUserResponse);
-        //
+        messageResponse.setCreateDate(new Date());
+        simpMessagingTemplate.convertAndSend("/queue/groups/" + groupId, messageResponse);
+        saveMessage(groupId, req);
+        return messageResponse;
+    }
+
+    @Async
+    void saveMessage(Long groupId, MessageRequest req) {
+        log.info("Save message...\n");
         try {
             feignClient.saveMessage(groupId, req);
         } catch (Exception e) {
             log.info("Failed to save message {}", e);
         }
-        //
-        simpMessagingTemplate.convertAndSend("/queue/groups/" + groupId, messageResponse);
-        return messageResponse;
     }
+
 
     @MessageMapping("/groups/{groupId}/status")
     public GroupStatusResponse sendGroupStatus(SimpMessageHeaderAccessor accessor,
                                                @DestinationVariable("groupId") Long groupId,
                                                @Payload GroupStatusRequest req) {
-
         GroupStatusResponse resp = new GroupStatusResponse();
         //
         MyUserPrinciple myUserPrinciple = (MyUserPrinciple) accessor.getUser();
@@ -82,11 +88,6 @@ public class SocketMessageController {
         resp.setStatus(req.getStatus());
         simpMessagingTemplate.convertAndSend("/queue/groups/" + groupId + "/status", resp);
         return resp;
-    }
-
-    @MessageMapping("/users/{userId}/messages")
-    public void sendMessageNotification(SimpMessageHeaderAccessor accessor, @DestinationVariable("userId") Long userId) {
-//        simpMessagingTemplate.convertAndSend("/queue/users/" + userId + "/messages", Map.of("Message", "Message Notification"));
     }
 
     @MessageMapping("/sendTo")

@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -21,4 +22,7 @@ public class GroupStatusResponse implements Serializable {
     private GroupStatus status;
 
     private BaseUserResponse user;
+
+    private Date createDate;
+
 }

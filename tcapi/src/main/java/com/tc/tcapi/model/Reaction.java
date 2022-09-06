@@ -32,4 +32,6 @@ public class Reaction  implements Serializable {
     @OneToMany(mappedBy = "reaction",fetch = FetchType.LAZY)
     private Collection<ReviewPostReaction> reviewPostReactions;
 
+    @OneToMany(mappedBy = "reaction")
+    private Collection<TourReaction> tourReactions = new ArrayList<>();
 }

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -43,6 +45,7 @@ public class NotificationUtil {
                 log.info("Send notification to user " + user.getUsername());
                 for (DeviceMetadata deviceMetadata :
                         user.getDeviceLists()) {
+                    if(deviceMetadata.getToken()==null)continue;
                     NotificationRequest notificationRequest = new NotificationRequest();
                     notificationRequest.setTarget(deviceMetadata.getToken());
                     notificationRequest.setTitle("Yêu thích mới");
@@ -53,7 +56,6 @@ public class NotificationUtil {
                     if (user.getId() != currentUser.getId()) {
                         try {
                             notificationFeign.sendNewMessageNotification(notificationRequest);
-
                         } catch (Exception e) {
                             log.info("Failed to send message notification {}", e.getMessage());
 
@@ -92,6 +94,7 @@ public class NotificationUtil {
                 log.info("Send comment notification to user " + user.getUsername());
                 for (DeviceMetadata deviceMetadata :
                         user.getDeviceLists()) {
+                    if(deviceMetadata.getToken()==null)continue;
                     NotificationRequest notificationRequest = new NotificationRequest();
                     notificationRequest.setTarget(deviceMetadata.getToken());
                     notificationRequest.setTitle("Bình luận mới!");
@@ -119,9 +122,57 @@ public class NotificationUtil {
 
         }
 
-
-        //actor
-
     }
+
+    public void sendMessageNotification(String message, List<User> users){
+        User currentUser = userService.getCurrentUser();
+        //object
+        String messageBody = currentUser.getUsername() + " " +
+                ": " + message;
+        NotificationObject notificationObject = new NotificationObject();
+        notificationObject.setMessage(messageBody);
+        notificationObject = notificationObjectService.saveFlush(notificationObject);
+
+        NotificationActor notificationActor = new NotificationActor();
+        notificationActor.setActor(currentUser);
+        notificationActor.setNotificationObject(notificationObject);
+         notificationActorService.saveFlush(notificationActor);
+        for (User user :
+                users) {
+            if (user.getDeviceLists() != null) {
+                for (DeviceMetadata deviceMetadata :
+                        user.getDeviceLists()) {
+                    if(deviceMetadata.getToken()==null)continue;
+                    log.info("Send message notification to user " + user.getUsername());
+                    NotificationRequest notificationRequest = new NotificationRequest();
+                    notificationRequest.setTarget(deviceMetadata.getToken());
+                    notificationRequest.setTitle("Tin nhắn mới");
+                    notificationRequest.setBody(messageBody);
+
+                    //
+                    if (user.getId() != currentUser.getId()) {
+                        try {
+                            notificationFeign.sendNewMessageNotification(notificationRequest);
+                        } catch (Exception e) {
+                            log.info("Failed to send message notification {}", e.getMessage());
+                        }
+                    }
+
+                }
+            }
+            //
+            if (user.getId() != currentUser.getId()) {
+                Notification notification = new Notification();
+                notification.setNotifier(user);
+                notification.setStatus(1);
+                notification.setNotificationObject(notificationObject);
+                notificationService.save(notification);
+            }
+
+        }
+    }
+
+
+
 }
 

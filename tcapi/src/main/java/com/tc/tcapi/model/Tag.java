@@ -5,10 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "tag")
@@ -24,12 +21,6 @@ public class Tag {
     private Long id;
 
     private String name;
-
-    @ManyToMany(mappedBy = "tags")
-    private List<ReviewPost> reviewPosts = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "tags")
-    private List<Post> posts = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
@@ -51,4 +42,13 @@ public class Tag {
     public int hashCode() {
         return Objects.hash(id, name, createDate);
     }
+
+    @ManyToMany(mappedBy = "tags")
+    private Collection<Tour> tours = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "tags")
+    private List<ReviewPost> reviewPosts = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "tags")
+    private List<Post> posts = new ArrayList<>();
 }

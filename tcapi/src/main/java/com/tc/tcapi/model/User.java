@@ -127,4 +127,18 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user")
     private List<DeviceMetadata> deviceLists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private Collection<Tour> tours = new LinkedList<>();
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private Collection<TourReaction> tourReactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private Collection<TourComment> tourComment = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user")
+    private Collection<TourUser> tourUsers = new ArrayList<>();
+
 }

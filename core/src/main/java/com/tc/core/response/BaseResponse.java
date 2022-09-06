@@ -52,5 +52,13 @@ public class BaseResponse implements Serializable {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(baseResponse);
     }
 
+    public static ResponseEntity<?> badRequest(Object message){
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        baseResponse.setStatusText(HttpStatus.BAD_REQUEST.name());
+        baseResponse.setData(message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(baseResponse);
+    }
+
 
 }

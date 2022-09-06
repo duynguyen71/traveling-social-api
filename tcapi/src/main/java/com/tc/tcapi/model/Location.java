@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -65,8 +66,11 @@ public class Location {
     @Column(updatable = false, name = "create_date")
     private Date createDate;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     private List<ReviewPost> reviewPosts = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
+    private Collection<Tour> tours = new ArrayList<>();
 
 }

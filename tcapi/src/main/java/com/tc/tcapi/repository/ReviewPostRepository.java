@@ -41,7 +41,7 @@ public interface ReviewPostRepository extends JpaRepository<ReviewPost, Long> {
             value = "SELECT DISTINCT p.* FROM review_post p JOIN review_post_tag pt\n" +
             "ON p.id = pt.review_post_id \n" +
             "JOIN tag t ON t.id = pt.tag_id\n" +
-            "FETCH JOIN location l ON l.id = p.location_id\n" +
+            "JOIN location l ON l.id = p.location_id\n" +
             "WHERE ((:keyword IS NULL OR t.name LIKE :keyword)\n" +
             "OR (:keyword IS NULL OR p.title LIKE :keyword))\n" +
             "OR  (:keyword IS NULL OR ((l.city LIKE :keyword OR l.label LIKE :keyword) AND l.status = 1 AND l.type = 2))\n" +

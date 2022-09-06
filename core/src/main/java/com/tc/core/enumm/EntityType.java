@@ -1,2 +1,6 @@
-package com.tc.core.enumm;public class EtityType {
+package com.tc.core.enumm;
+
+public enum EntityType {
+
+
 }

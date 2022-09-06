@@ -30,7 +30,7 @@ public class NotifyService {
             response = FirebaseMessaging.getInstance().send(message);
             return response;
         } catch (FirebaseMessagingException e) {
-            log.error("Fail to send firebase notification", e);
+            log.error("Fail to send firebase notification", e.getMessage());
             return null;
         }
     }

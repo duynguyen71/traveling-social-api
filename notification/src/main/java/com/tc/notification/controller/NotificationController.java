@@ -16,6 +16,7 @@ public class NotificationController {
 
     @PostMapping("/token")
     public ResponseEntity<?> sendPnsToDevice(@RequestBody NotificationRequest request) {
+        log.info("Send notification to "+ request.getTarget());
         return helper.sendPnsToDevice(request);
     }
 }

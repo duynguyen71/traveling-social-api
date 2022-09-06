@@ -205,6 +205,8 @@ public class ReviewPostHelper {
             location.setLongitude(locationRequest.getLongitude());
             location.setLatitude(locationRequest.getLatitude());
             location.setCity(locationRequest.getCity());
+            location.setCountryCode(locationRequest.getCountryCode());
+            location.setCountryName(locationRequest.getCountryName());
             location = locationService.saveFlush(location);
             reviewPost.setLocation(location);
             reviewPostService.save(reviewPost);
@@ -280,7 +282,7 @@ public class ReviewPostHelper {
     }
 
     /**
-     * Get current user Review Posts
+     * Get current user Review Posts detail
      */
     public ResponseEntity<?> getCurrentUserReviewPostDetail(Long id) {
         ReviewPost reviewPost = reviewPostService.getById(id);
