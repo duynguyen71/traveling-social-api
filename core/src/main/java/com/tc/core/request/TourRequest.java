@@ -33,5 +33,6 @@ public class TourRequest {
 
     private Set<TagRequest> tags = new HashSet<>();
 
+    private int totalDay = 1;
 
 }

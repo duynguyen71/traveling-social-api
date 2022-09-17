@@ -41,5 +41,7 @@ public class ReviewPostEditDetailResponse implements Serializable {
 
     private LocationResponse location;
 
+    private double myRating;
+
 
 }

@@ -23,12 +23,12 @@ public class TourUserService {
         return repo.countByTourAndStatus(tour, 2);
     }
 
-    public int countRequestUser(Tour tour) {
-        return repo.countByTourAndStatus(tour, 1);
+    public boolean existByUserIdAndTour(Long userId, Long tourId){
+        return repo.existsByUser_IdAndTour_IdAndStatus(userId,tourId,2);
     }
 
-    public int countRejectedUser(Tour tour) {
-        return repo.countByTourAndStatus(tour, 0);
+    public int countRequestUser(Tour tour) {
+        return repo.countByTourAndStatus(tour, 1);
     }
 
     public void save(TourUser tourUser) {
@@ -43,11 +43,19 @@ public class TourUserService {
         return repo.getTourUsersNative(owner.getId(), tourId);
     }
 
+    public boolean isJoined(Long userId,Long tourId){
+        return repo.existsByUser_IdAndTour_IdAndStatus(userId,tourId,2);
+    };
+
     public boolean availableTourUser(Long userId) {
         return repo.getJoinedTours(userId).isEmpty();
     }
 
     public List<TourUser> getApprovedUsersInTour(Long tourId, Long currentUserId) {
         return repo.getApprovedUserInTour(tourId, currentUserId);
+    }
+    public TourUser getTourUser(Long tourId,Long tourUserId){
+        return
+                repo.findByTour_IdAndTour_User_Id(tourId,tourUserId).orElse(null);
     }
 }

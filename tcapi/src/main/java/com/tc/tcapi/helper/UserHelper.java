@@ -389,6 +389,8 @@ public class UserHelper {
         if (birthdate != null) {
             user.setBirthdate(birthdate);
         }
+        userService.save(user);
+
         LocationRequest locationRequest = request.getLocation();
 
         if (locationRequest != null) {
@@ -413,7 +415,8 @@ public class UserHelper {
             location.setPostal(locationRequest.getPostal());
             location.setCity(locationRequest.getCity());
             location.setStreetAddress(locationRequest.getStreetAddress());
-            locationService.save(location);
+             locationService.save(location);
+
         }
         return BaseResponse.success("Update base user info success!");
     }

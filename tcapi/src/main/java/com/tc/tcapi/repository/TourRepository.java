@@ -18,19 +18,14 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "select distinct* from tour t join tour_user tu\n" +
+            value = "select distinct* from tour t left join tour_user tu\n" +
                     "on t.id = tu.tour_id\n" +
                     "where (t.user_id = :userId\n" +
-                    "or (tu.user_id = :userId AND tu.status = 2)) \n" +
+                    "OR (tu.user_id = :userId AND tu.status = 2)) \n" +
+                    "AND t.status = 1 AND t.is_close = 0 \n" +
                     "order by t.create_date desc, tu.update_date desc"
     )
     List<Tour> getCurrentJoinTour(@Param("userId") Long userId);
-
-
-    List<Tour> findByUserOrTourUsers_UserAndTourUsers_StatusOrderByCreateDateDescTourUsers_UpdateDateDesc(User user, User user3, int status);
-
-//    List<Tour> findByUserOrTourUsers_UserAndTourUsers_StatusOrderByCreateDateAndTourUsers_UpdateDateDesc(User user, int status);
-
 
     List<Tour> findByTourUsers_UserAndStatus(User tourUsers, @Nullable int status, Pageable pageable);
 
@@ -42,4 +37,5 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
 
     Optional<Tour> findByUserAndTourUsers_Id(User user, Long tourUserId);
 
+    List<Tour> findByStatus(int i);
 }

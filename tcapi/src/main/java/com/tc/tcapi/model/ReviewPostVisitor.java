@@ -32,6 +32,8 @@ public class ReviewPostVisitor {
 
     private Integer status;
 
+    private double rating;
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createDate;

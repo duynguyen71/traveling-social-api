@@ -19,7 +19,7 @@ public interface ReviewPostVisitorRepository extends JpaRepository<ReviewPostVis
 
     Optional<ReviewPostVisitor> findByReviewPostAndUser(ReviewPost reviewPost, User user);
 
-
     boolean existsByUser_IdAndReviewPost_IdAndStatus(Long userId, Long reviewPostId, Integer status);
 
+    Optional<ReviewPostVisitor> findByUser_IdAndReviewPost_Id(Long userId,Long reviewPostId);
 }

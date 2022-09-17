@@ -42,12 +42,16 @@ public interface TourUserRepository extends JpaRepository<TourUser, Long> {
 
     Optional<TourUser> findByTour_UserAndId(User currentUser, Long tourUserId);
 
-    List<TourUser> findByTourAndStatus(Tour tour, int i);
-
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM tour_user tu JOIN tour t ON t.id = tu.tour_id\n" +
                     "WHERE tour_id = :tourId AND tu.status = 2 AND tu.user_id <> :id"
     )
     List<TourUser> getApprovedUserInTour(@Param("tourId") Long tourId, @Param("id") Long currentUserId);
+
+    boolean existsByUser_IdAndTour_IdAndStatus(Long userId, Long tourId, int i);
+
+    boolean existsByUser_IdAndTour_IdAndStatus(Long id, Tour tour, int i);
+
+    Optional<TourUser> findByTour_IdAndTour_User_Id(Long tourId, Long tourUserId);
 }

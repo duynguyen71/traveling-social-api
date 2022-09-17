@@ -42,13 +42,13 @@ public class ReviewPostHelper {
     /**
      * Get base Review Posts
      */
-    public ResponseEntity<?> getReviewPosts(Map<String, String> param) {
+    public ResponseEntity<?> getPoularReviewPosts(Map<String, String> param) {
         BaseParamRequest baseParamRequest = new BaseParamRequest(param);
-        Pageable pageable = baseParamRequest.toPageRequest();
-        List<ReviewPost> reviews = reviewPostService.getReviewPosts(1, pageable);
+        List<ReviewPost> reviews = reviewPostService.getReviewPosts(1, baseParamRequest);
         List<BaseReviewPostResponse> rs = reviews.stream()
                 .map(r -> {
                     BaseReviewPostResponse map = modelMapper.map(r, BaseReviewPostResponse.class);
+                    map.setRating(reviewPostService.countRating(r.getId()));
                     Location location = r.getLocation();
                     if (location != null) {
                         map.setLocation(location.getLabel());
@@ -77,6 +77,7 @@ public class ReviewPostHelper {
             }
             // get review post detail
             ReviewDetailResponse rs = modelMapper.map(review, ReviewDetailResponse.class);
+            rs.setRating(reviewPostService.countRating(rs.getId()));
             // count viewer
             int countVisitor = postVisitorService.countVisitor(review);
             rs.setNumOfVisitor(countVisitor);
@@ -93,6 +94,7 @@ public class ReviewPostHelper {
             // check is bookmark
             boolean bookmark = postVisitorService.hasBookmark(currentUser.getId(), reviewId);
             rs.setHasBookmark(bookmark);
+            rs.setMyRating(postVisitorService.getMyRating(reviewId, currentUser.getId()));
             // get attachments
             List<ReviewPostImage> images = attService.getImages(review, 1);
             rs.setImages(images.stream()
@@ -113,6 +115,8 @@ public class ReviewPostHelper {
                     reviewPostReport.setNumOfComment(commentService.countAllActiveComments(r));
                     reviewPostReport.setNumOfVisitor(postVisitorService.countVisitor(r));
                     reviewPostReport.setNumOfLike(reactionService.countAllActiveReaction(r));
+                    reviewPostReport.setNumOfLike(reactionService.countAllActiveReaction(r));
+                    reviewPostReport.setRating(reviewPostService.countRating(r.getId()));
                     return reviewPostReport;
                 }).collect(Collectors.toList());
         return BaseResponse.success(rs, "get current user review posts success");
@@ -310,5 +314,22 @@ public class ReviewPostHelper {
         bookmarkedReviewPost.setStatus(0);
         postVisitorService.save(bookmarkedReviewPost);
         return BaseResponse.success("Remove bookmark post: " + id + " success!");
+    }
+
+    public ResponseEntity<?> getNewestReviewPost(Map<String, String> param) {
+        BaseParamRequest baseParamRequest = new BaseParamRequest(param);
+        Pageable pageable = baseParamRequest.toNativePageRequest("createDate");
+        List<ReviewPost> reviews = reviewPostService.getNewestReviewPost(pageable);
+        List<BaseReviewPostResponse> rs = reviews.stream()
+                .map(r -> {
+                    BaseReviewPostResponse map = modelMapper.map(r, BaseReviewPostResponse.class);
+                    Location location = r.getLocation();
+                    if (location != null) {
+                        map.setLocation(location.getLabel());
+                    }
+                    return map;
+                })
+                .collect(Collectors.toList());
+        return BaseResponse.success(rs, "get newest review posts success!");
     }
 }

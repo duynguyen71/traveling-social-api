@@ -29,4 +29,6 @@ public class ReviewPostReport implements Serializable {
     private Date createDate;
 
     private Date updateDate;
+
+    private Double rating;
 }

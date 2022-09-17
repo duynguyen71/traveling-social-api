@@ -30,5 +30,7 @@ public class BaseTourResponse {
 
     private Set<TagResponse> tags = new HashSet<>();
 
+    private LocationResponse location;
+
 
 }

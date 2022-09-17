@@ -13,10 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -44,8 +42,22 @@ public class TourHelper {
         return BaseResponse.success(collect, "Get created tours success!");
     }
 
-    public ResponseEntity<?> getAvailableTours() {
-        return null;
+    public ResponseEntity<?> getAvailableTours(Map<String, String> param) {
+        List<Tour> tours = tourService.getAvailableTours();
+        List<Tour> copy = new ArrayList<>(tours);
+        List<Tour> randomTours = new ArrayList<>();
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < Math.min(10, tours.size()); i++) {
+            randomTours.add(copy.remove(secureRandom.nextInt(copy.size())));
+        }
+        List<BaseTourResponse> data = randomTours.stream()
+                .map(tour -> {
+                    Class<BaseTourResponse> map = BaseTourResponse.class;
+                    BaseTourResponse baseTourResponse = modelMapper.map(tour, map);
+                    baseTourResponse.setJoinedMember(tourUserService.countJoinedUser(tour));
+                    return baseTourResponse;
+                }).collect(Collectors.toList());
+        return BaseResponse.success(data, null);
     }
 
 
@@ -71,9 +83,19 @@ public class TourHelper {
         tour.setContent(content);
         tour.setClose(request.isClose());
         tour.setCost(cost);
+        tour.setStatus(1);
+        tour.setTotalDay(request.getTotalDay());
         tour.setDepartureDate(departureDate);
         tour.setNumOfMember(numOfMember);
         tour = tourService.saveFlush(tour);
+        //
+        if (!tourUserService.existByUserIdAndTour(userService.getCurrentUser().getId(), tour.getId())) {
+            TourUser tourUser = new TourUser();
+            tourUser.setUser(userService.getCurrentUser());
+            tourUser.setTour(tour);
+            tourUser.setStatus(2);
+            tourUserService.save(tourUser);
+        }
         // Save location
         LocationRequest locationRequest = request.getLocation();
         if (locationRequest.getId() == null) {
@@ -93,20 +115,22 @@ public class TourHelper {
         }
         //
         Set<TagRequest> requestTags = request.getTags();
-        for (TagRequest tagRequest :
-                requestTags) {
-            Tag tag;
-            String name = tagRequest.getName();
-            tag = tagService.getByName(name);
-            if (tag == null) {
-                tag = tagService.saveFlush(Tag.builder().name(name).build());
+        if (requestTags != null) {
+            for (TagRequest tagRequest :
+                    requestTags) {
+                Tag tag;
+                String name = tagRequest.getName();
+                tag = tagService.getByName(name);
+                if (tag == null) {
+                    tag = tagService.saveFlush(Tag.builder().name(name).build());
+                }
+                if (tagRequest.getStatus() == 0) {
+                    tour.getTags().remove(tag);
+                } else {
+                    tour.getTags().add(tag);
+                }
+                tourService.save(tour);
             }
-            if (tagRequest.getStatus() == 0) {
-                tour.getTags().remove(tag);
-            } else {
-                tour.getTags().add(tag);
-            }
-            tourService.save(tour);
         }
 
         return BaseResponse.success(modelMapper.map(tour, BaseTourResponse.class), "Create tour success!");
@@ -124,7 +148,8 @@ public class TourHelper {
         User currentUser = userService.getCurrentUser();
         Tour tour = tourService.getByIdAndUser(tourId, currentUser);
         if (tour != null) {
-            tour.setClose(isClose);
+            tour.setClose(true);
+            tour.setStatus(0);
             tourService.save(tour);
             return BaseResponse.success("Update tour is close: " + isClose);
         }
@@ -133,11 +158,15 @@ public class TourHelper {
 
     public ResponseEntity<?> getTourDetail(Long id) {
         User currentUser = userService.getCurrentUser();
-        Tour tour = tourService.getByIdAndUser(id, currentUser);
+        Tour tour = tourService.getbyId(id);
         if (tour == null) {
             return BaseResponse.badRequest("Can not find tour with id: " + id);
         }
         TourDetailResponse detail = modelMapper.map(tour, TourDetailResponse.class);
+        detail.setJoinedMember(tourUserService.countJoinedUser(tour));
+        detail.setJoined(tourUserService.isJoined(currentUser.getId(), tour.getId()));
+        detail.setHost(modelMapper.map(tour.getUser(), BaseUserResponse.class));
+
         return BaseResponse.success(detail, "Get tour detail success");
     }
 
@@ -159,5 +188,17 @@ public class TourHelper {
             return BaseResponse.success(map, "Get current tour success");
         }
         return BaseResponse.badRequest("Can not find current tour");
+    }
+
+    public ResponseEntity<?> completeTure(Long tourId) {
+        User currentUser = userService.getCurrentUser();
+        Tour tour = tourService.getByIdAndUser(tourId, currentUser);
+        if (tour != null) {
+            tour.setStatus(2);
+            tour.setClose(true);
+            tourService.save(tour);
+            return BaseResponse.success("Update tour is completed ");
+        }
+        return BaseResponse.success("Can not find your tour with id: " + tourId);
     }
 }

@@ -4,6 +4,7 @@ import com.tc.tcapi.model.ReviewPost;
 import com.tc.tcapi.model.Tag;
 import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.ReviewPostRepository;
+import com.tc.tcapi.request.BaseParamRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,15 @@ public class ReviewPostService {
          repo.save(review);
     }
 
-    public List<ReviewPost> getReviewPosts(Integer status, Pageable pageable) {
-        return repo.findReviewPostsNative(status, pageable);
+    public List<ReviewPost> getReviewPosts(Integer status, BaseParamRequest baseParamRequest) {
+        return repo.getPopularReviewPostsNative(4,4*baseParamRequest.getPage());
+    }
+  public List<ReviewPost> getNewestReviewPost(Pageable pageable) {
+        return repo.findByStatus(1,pageable);
+    }
+
+    public Double countRating(Long reviewPostId){
+        return repo.countRating(reviewPostId);
     }
     public ReviewPost getById(Long postId) {
         return repo.findById(postId).orElse(null);

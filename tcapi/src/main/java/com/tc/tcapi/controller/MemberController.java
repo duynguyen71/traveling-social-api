@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.ws.rs.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public class MemberController {
     }
 
     @PutMapping("/users/me")
-    public ResponseEntity<?> updateBaseUserInfo(@Valid @RequestBody UpdateBaseInfoRequest request) {
+    public ResponseEntity<?> updateBaseUserInfo(@RequestBody UpdateBaseInfoRequest request) {
         return userHelper.updateBaseUserInfo(request);
     }
 
@@ -259,9 +260,19 @@ public class MemberController {
         return reviewPostHelper.getUserReviewPosts(userId, param);
     }
 
+    /**
+     * Get Review Posts
+     *
+     * @param param
+     */
     @GetMapping("/review-posts")
     public ResponseEntity<?> getReviewPosts(@RequestParam Map<String, String> param) {
-        return reviewPostHelper.getReviewPosts(param);
+        return reviewPostHelper.getPoularReviewPosts(param);
+    }
+
+    @GetMapping("/review-posts/newest")
+    public ResponseEntity<?> getNewestReviewPosts(@RequestParam Map<String, String> param) {
+        return reviewPostHelper.getNewestReviewPost(param);
     }
 
     @PostMapping("/review-posts")
@@ -456,11 +467,10 @@ public class MemberController {
     /**
      * Get current user tour
      *
-
      * @return
      */
     @GetMapping("/users/me/tours/current")
-    public ResponseEntity<?> getCurrentTour(){
+    public ResponseEntity<?> getCurrentTour() {
         return tourHelper.getCurrentTour();
     }
 
@@ -470,7 +480,7 @@ public class MemberController {
     }
 
     @GetMapping("/users/me/tours/{id}")
-    public ResponseEntity<?> getTourDetail(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getMyTourDetail(@PathVariable("id") Long id) {
         return tourHelper.getTourDetail(id);
     }
 
@@ -482,7 +492,7 @@ public class MemberController {
     @PutMapping("/users/me/tours/users/{tourUserId}/status/{status}")
     public ResponseEntity<?> approveUser(@PathVariable("tourUserId") Long tourUserId,
                                          @PathVariable("status") int approveStatus) {
-        return tourMemberHelper.approveUser( tourUserId, approveStatus);
+        return tourMemberHelper.approveUser(tourUserId, approveStatus);
     }
 
     /**
@@ -507,6 +517,11 @@ public class MemberController {
         return tourHelper.closeTour(tourId, close == 0);
     }
 
+    @PostMapping("/users/me/tours/{tourId}/complete")
+    public ResponseEntity<?> completeTour(@PathVariable("tourId") Long tourId) {
+        return tourHelper.completeTure(tourId);
+    }
+
     /***
      * Get available Tours
      * @param param
@@ -514,7 +529,12 @@ public class MemberController {
      */
     @GetMapping("/tours")
     public ResponseEntity<?> getAvailableTours(@RequestParam Map<String, String> param) {
-        return tourHelper.getAvailableTours();
+        return tourHelper.getAvailableTours(param);
+    }
+
+    @GetMapping("/tours/{id}")
+    public ResponseEntity<?> getTourDetail(@PathVariable("id") Long id) {
+        return tourHelper.getTourDetail(id);
     }
 
     /**
@@ -526,6 +546,10 @@ public class MemberController {
     @PostMapping("/tours/{tourId}/request-join")
     public ResponseEntity<?> requestJoinTour(@PathVariable("tourId") Long tourId) {
         return tourMemberHelper.requestJoinTour(tourId);
+    }
+   @PostMapping("/tours/{tourId}/leave")
+    public ResponseEntity<?> leaveTour(@PathVariable("tourId") Long tourId) {
+        return tourMemberHelper.leaveTour(tourId);
     }
 
 

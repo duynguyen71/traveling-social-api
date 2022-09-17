@@ -29,8 +29,12 @@ public class TourMemberHelper {
     private final ModelMapper modelMapper;
 
     public ResponseEntity<?> requestJoinTour(Long tourId) {
-        Tour tour = tourService.getAvailableTour(tourId);
+        Tour tour = tourService.getbyId(tourId);
         if (tour == null) {
+            return BaseResponse.badRequest("Tour was not available");
+        }
+        int joinedUser = tourUserService.countJoinedUser(tour);
+        if (joinedUser == tour.getNumOfMember()) {
             return BaseResponse.badRequest("Tour was not available");
         }
         TourUser tourUser = new TourUser();
@@ -40,25 +44,8 @@ public class TourMemberHelper {
         tourUser.setStatus(1);
         tourUserService.save(tourUser);
         //TODO: notify to tour owner
-
+        log.info("Request join tour id {} success", tourId);
         return BaseResponse.badRequest("Request join tour success");
-    }
-
-    public ResponseEntity<?> acceptUser(Long tourUserId) {
-        User currentUser = userService.getCurrentUser();
-        Tour tour = tourService.getByOwnerAndTourUser(currentUser, tourUserId);
-        if (tour == null) {
-            return BaseResponse.badRequest("Can not find your tour have tour user id: " + tourUserId);
-        }
-        TourUser tourUser = new TourUser();
-        tourUser.setTour(tour);
-        tourUser.setUser(currentUser);
-        // set accepted status
-        tourUser.setStatus(2);
-        tourUserService.save(tourUser);
-        //TODO: notify to accepted owner
-
-        return BaseResponse.badRequest("Accept tour user: " + tourUserId + " success!");
     }
 
 
@@ -101,6 +88,16 @@ public class TourMemberHelper {
             }
             default:
                 return BaseResponse.badRequest("Approve status not valid!");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?> leaveTour(Long tourId) {
+        TourUser tourUser = tourUserService.getTourUser(tourId, userService.getCurrentUser().getId());
+        if (tourUser != null) {
+            log.info("Leave tour sucess");
+            tourUser.setStatus(4);
+            tourUserService.save(tourUser);
         }
         return ResponseEntity.ok().build();
     }

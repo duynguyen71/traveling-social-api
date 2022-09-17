@@ -6,6 +6,8 @@ import com.tc.tcapi.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewPostVisitorService {
@@ -31,5 +33,12 @@ public class ReviewPostVisitorService {
     public boolean hasBookmark(Long userId, Long postId) {
         //status 1: bookmark
         return repo.existsByUser_IdAndReviewPost_IdAndStatus(userId, postId, 1);
+    }
+
+    public double getMyRating(Long reviewPostId,Long userId) {
+        Optional<ReviewPostVisitor> optional = repo.findByUser_IdAndReviewPost_Id(userId, reviewPostId);
+        if(optional.isEmpty())
+        return 0;
+        return optional.get().getRating();
     }
 }

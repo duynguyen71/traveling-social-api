@@ -28,5 +28,7 @@ public class BaseReviewPostResponse implements Serializable {
 
     private Date createDate;
 
+    private double rating;
+
 
 }

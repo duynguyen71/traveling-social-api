@@ -4,12 +4,14 @@ import com.tc.tcapi.model.Tour;
 import com.tc.tcapi.model.User;
 import com.tc.tcapi.repository.TourRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TourService {
 
@@ -58,7 +60,8 @@ public class TourService {
 
     public Tour getCurrentJoinTour(User user) {
         List<Tour> tours = repo.getCurrentJoinTour(user.getId());
-        if (tours.size() > 0) {
+        log.info("Current tur {}",tours);
+    if (tours.size() > 0) {
             return tours.get(0);
         }
         return null;
@@ -67,5 +70,13 @@ public class TourService {
     public Tour getByIdAndUser(Long id, User currentUser) {
 
         return repo.findByIdAndUser(id, currentUser).orElse(null);
+    }
+
+    public List<Tour> getAvailableTours() {
+        return repo.findByStatus(1);
+    }
+
+    public Tour getbyId(Long id) {
+        return repo.findById(id).orElse(null);
     }
 }

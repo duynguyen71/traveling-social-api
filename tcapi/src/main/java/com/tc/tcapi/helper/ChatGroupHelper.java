@@ -68,7 +68,6 @@ public class ChatGroupHelper {
         if (memberIds == null || memberIds.isEmpty()) {
             return BaseResponse.badRequest("create group failed: member users is empty");
         }
-//        TODO: loi tu tao chat grop voi chinh  minh
         User currentUser = userService.getCurrentUser();
         ChatGroup chatGroup = null;
         //check exist group between two users
@@ -123,7 +122,7 @@ public class ChatGroupHelper {
             if (byUsername != null && byUsername.getId() != currentUser.getId()) {
                 chatGroup = service.getGroupByTwoUsers(byUsername.getId(), currentUser.getId());
                 if (chatGroup != null) {
-                    return BaseResponse.badRequest("Group between two user exist");
+                    return BaseResponse.success(modelMapper.map(chatGroup, ChatGroupResponse.class), "create chat group success");
                 }
             }
         }

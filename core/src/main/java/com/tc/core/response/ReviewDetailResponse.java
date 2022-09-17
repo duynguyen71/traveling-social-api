@@ -35,6 +35,10 @@ public class ReviewDetailResponse implements Serializable {
 
     private int status;
 
+    private double rating;
+
+    private double myRating;
+
     private ReactionResponse reaction;
 
     private FileUploadResponse coverPhoto;

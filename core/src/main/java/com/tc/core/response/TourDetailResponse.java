@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -31,9 +32,17 @@ public class TourDetailResponse {
 
     private Set<TagResponse> tags = new HashSet<>();
 
+    private BaseUserResponse host;
+
+    private List<TourUserResponse> users;
+
     private LocationResponse location;
 
     private Date departureDate;
+
+    private boolean isJoined;
+
+    private Date createDate;
 
 
 }

@@ -2,20 +2,14 @@ package com.tc.tcapi.controller;
 
 import com.tc.tcapi.helper.ReviewPostHelper;
 import com.tc.tcapi.service.DeviceMetadataService;
-import com.tc.tcapi.utilities.Constance;
 import com.tc.tcapi.helper.UserHelper;
 import com.tc.core.request.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -58,6 +52,6 @@ public class PublicController {
 
     @GetMapping("/reviews")
     public ResponseEntity<?> getReviewPosts(@RequestParam Map<String, String> param) {
-        return reviewPostHelper.getReviewPosts(param);
+        return reviewPostHelper.getPoularReviewPosts(param);
     }
 }
